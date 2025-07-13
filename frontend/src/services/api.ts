@@ -1,16 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
 import toast from 'react-hot-toast';
 import {
-  URLAnalysis,
-  BrokenLink,
-  AuthRequest,
-  AuthResponse,
-  URLRequest,
   PaginatedResponse,
-  BulkRequest,
-  UseURLsOptions,
-  User,
   SuccessResponse,
+  URLAnalysis,
+  URLRequest,
+  User,
 } from '../types';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
@@ -27,18 +22,17 @@ api.interceptors.response.use(
   (error) => {
     const message = error.response?.data?.error || 'Ocorreu um erro';
     toast.error(message);
-    
+
     return Promise.reject(error);
   }
 );
 
 export class APIService {
-
   static async getProfile(): Promise<User> {
     return {
       id: 1,
       username: 'public_user',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     };
   }
 
@@ -70,7 +64,7 @@ export class APIService {
           has_login_form: false,
           status: 'completed',
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         },
         {
           id: 2,
@@ -89,7 +83,7 @@ export class APIService {
           has_login_form: false,
           status: 'processing',
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         },
         {
           id: 3,
@@ -108,7 +102,7 @@ export class APIService {
           has_login_form: true,
           status: 'completed',
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         },
         {
           id: 4,
@@ -128,8 +122,8 @@ export class APIService {
           status: 'error',
           error_message: 'Site não acessível',
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
+          updated_at: new Date().toISOString(),
+        },
       ];
 
       return {
@@ -137,7 +131,7 @@ export class APIService {
         page: params?.page || 1,
         limit: params?.limit || 10,
         total: mockURLs.length,
-        total_pages: 1
+        total_pages: 1,
       };
     }
   }
@@ -164,17 +158,15 @@ export class APIService {
         has_login_form: false,
         status: 'completed',
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
     }
   }
 
   static async addURL(urlData: URLRequest): Promise<URLAnalysis> {
-    const response: AxiosResponse<{ data: URLAnalysis; message: string }> = await api.post(
-      '/urls',
-      urlData
-    );
-    
+    const response: AxiosResponse<{ data: URLAnalysis; message: string }> =
+      await api.post('/urls', urlData);
+
     toast.success('URL added successfully!');
     return response.data.data;
   }
@@ -189,9 +181,29 @@ export class APIService {
   }
 
   static async healthCheck(): Promise<{ status: string }> {
-    const response = await axios.get(`${API_BASE_URL.replace('/api', '')}/health`);
+    const response = await axios.get(
+      `${API_BASE_URL.replace('/api', '')}/health`
+    );
     return response.data;
+  }
+
+  static async bulkAnalyze(ids: number[]): Promise<SuccessResponse> {
+    try {
+      const response = await api.post('/urls/bulk-analyze', { ids });
+      return response.data;
+    } catch (error) {
+      throw new Error('messages.errorBulkAnalyze');
+    }
+  }
+
+  static async bulkDelete(ids: number[]): Promise<SuccessResponse> {
+    try {
+      const response = await api.post('/urls/bulk-delete', { ids });
+      return response.data;
+    } catch (error) {
+      throw new Error('messages.errorBulkDelete');
+    }
   }
 }
 
-export default APIService; 
+export default APIService;

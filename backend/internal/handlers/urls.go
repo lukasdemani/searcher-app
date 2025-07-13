@@ -127,3 +127,101 @@ func (h *URLHandler) DeleteURL(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.SuccessResponse{Message: "URL deleted successfully"})
 }
+
+func (h *URLHandler) BulkAnalyze(c *gin.Context) {
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+	defer cancel()
+
+	var req models.BulkRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	// Check if context is already cancelled
+	select {
+	case <-ctx.Done():
+		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
+		return
+	default:
+	}
+
+	for _, id := range req.IDs {
+		go func(urlID int) {
+			// Create background context for analysis (not cancelled by request)
+			bgCtx, bgCancel := context.WithTimeout(context.Background(), 5*time.Minute)
+			defer bgCancel()
+
+			// Broadcast processing status
+			h.wsHandler.BroadcastStatusUpdate(urlID, "processing", nil)
+
+			// Perform analysis
+			err := h.crawlerService.AnalyzeURL(urlID)
+
+			// Get updated URL data
+			updatedURL, getErr := h.crawlerService.GetURL(urlID)
+			if getErr != nil {
+				h.wsHandler.BroadcastStatusUpdate(urlID, "error", map[string]string{"error": getErr.Error()})
+				return
+			}
+
+			// Broadcast final status
+			if err != nil {
+				h.wsHandler.BroadcastStatusUpdate(urlID, "error", updatedURL)
+			} else {
+				h.wsHandler.BroadcastStatusUpdate(urlID, "completed", updatedURL)
+			}
+
+			// Check if background context was cancelled
+			select {
+			case <-bgCtx.Done():
+				h.wsHandler.BroadcastStatusUpdate(urlID, "timeout", map[string]string{"error": "Analysis timeout"})
+			default:
+			}
+		}(id)
+	}
+
+	c.JSON(http.StatusOK, models.SuccessResponse{
+		Message: "Bulk analysis started",
+		Data:    map[string]int{"count": len(req.IDs)},
+	})
+}
+
+func (h *URLHandler) BulkDelete(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
+	defer cancel()
+
+	var req models.BulkRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	select {
+	case <-ctx.Done():
+		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
+		return
+	default:
+	}
+
+	deleted := 0
+	for _, id := range req.IDs {
+		select {
+		case <-ctx.Done():
+			c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout during bulk deletion"})
+			return
+		default:
+		}
+
+		if err := h.crawlerService.DeleteURL(id); err == nil {
+			deleted++
+			h.wsHandler.BroadcastStatusUpdate(id, "deleted", nil)
+		}
+	}
+
+	c.JSON(http.StatusOK, models.SuccessResponse{
+		Message: "Bulk deletion completed",
+		Data:    map[string]int{"deleted": deleted, "total": len(req.IDs)},
+	})
+}

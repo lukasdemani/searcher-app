@@ -49,6 +49,9 @@ func main() {
 			urls.POST("", urlHandler.CreateURL)
 			urls.DELETE("/urls/:id", urlHandler.DeleteURL)
 		}
+
+		apiBulk.POST("/urls/bulk-analyze", urlHandler.BulkAnalyze)
+		apiBulk.DELETE("/urls/bulk-delete", urlHandler.BulkDelete)
 	}
 
 	port := os.Getenv("PORT")
