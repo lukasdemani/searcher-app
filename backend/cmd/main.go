@@ -47,6 +47,7 @@ func main() {
 		{
 			urls.GET("", urlHandler.GetURLs)
 			urls.POST("", urlHandler.CreateURL)
+			urls.DELETE("/urls/:id", urlHandler.DeleteURL)
 		}
 	}
 

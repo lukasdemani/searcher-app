@@ -184,11 +184,10 @@ export class APIService {
     toast.success('URL analysis started!');
   }
 
-  static async deleteURL(id: number): Promise<void> {
-    await api.delete(`/urls/${id}`);
-    toast.success('URL deleted successfully!');
+  async deleteURL(id: number) {
+    return await this.request.delete(`${this.baseURL}/urls/${id}`);
   }
-  
+
   static async healthCheck(): Promise<{ status: string }> {
     const response = await axios.get(`${API_BASE_URL.replace('/api', '')}/health`);
     return response.data;

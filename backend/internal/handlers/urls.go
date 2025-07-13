@@ -99,3 +99,31 @@ func (h *URLHandler) AnalyzeURL(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.SuccessResponse{Message: "URL analysis started"})
 }
+
+func (h *URLHandler) DeleteURL(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+	defer cancel()
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+			c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: "Invalid URL ID"})
+			return
+	}
+
+	select {
+	case <-ctx.Done():
+			c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
+			return
+	default:
+	}
+
+	err = h.crawlerService.DeleteURL(id)
+	if err != nil {
+			c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: err.Error()})
+			return
+	}
+
+	h.wsHandler.BroadcastStatusUpdate(id, "deleted", nil)
+
+	c.JSON(http.StatusOK, models.SuccessResponse{Message: "URL deleted successfully"})
+}
