@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { toast } from 'react-hot-toast';
+import { useCallback, useEffect, useState } from 'react';
 import { APIService } from '../services/api';
-import { URLAnalysis } from '../types';
+import { PaginatedResponse, URLAnalysis } from '../types';
+import { useWebSocket } from './useWebSocket';
 
 interface UseURLsOptions {
   page?: number;
@@ -12,169 +12,206 @@ interface UseURLsOptions {
   refreshInterval?: number;
 }
 
-interface UseURLsReturn {
-  urls: URLAnalysis[];
-  loading: boolean;
-  error: string | null;
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-  selectedURLs: number[];
-  refetch: () => void;
-  addURL: (url: string) => Promise<void>;
-  deleteURL: (id: number) => Promise<void>;
-  bulkDelete: (ids: number[]) => Promise<void>;
-  bulkAnalyze: (ids: number[]) => Promise<void>;
-  toggleSelect: (id: number) => void;
-  selectAll: () => void;
-  clearSelection: () => void;
-  exportData: (format?: 'csv' | 'json') => Promise<void>;
-  importData: (file: File) => Promise<void>;
-}
-
-export const useURLs = (options: UseURLsOptions = {}): UseURLsReturn => {
-  const {
-    page = 1,
-    limit = 10,
-    search = '',
-    status = '',
-    autoRefresh = true,
-    refreshInterval = 5000, // 5 seconds
-  } = options;
-
+export const useURLs = (options: UseURLsOptions = {}) => {
   const [urls, setUrls] = useState<URLAnalysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedURLs, setSelectedURLs] = useState<number[]>([]);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0,
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const {
+    page = 1,
+    limit = 10,
+    search = '',
+    status = 'all',
+    autoRefresh = false,
+    refreshInterval = 30000,
+  } = options;
+
+  const handleStatusUpdate = useCallback((update: any) => {
+    console.log('Status update received:', update);
+
+    setUrls((currentUrls) => {
+      const updatedUrls = [...currentUrls];
+      const urlIndex = updatedUrls.findIndex((url) => url.id === update.url_id);
+
+      if (urlIndex !== -1) {
+        if (update.status === 'deleted') {
+          updatedUrls.splice(urlIndex, 1);
+        } else if (update.data) {
+          updatedUrls[urlIndex] = { ...updatedUrls[urlIndex], ...update.data };
+        } else {
+          updatedUrls[urlIndex] = {
+            ...updatedUrls[urlIndex],
+            status: update.status,
+          };
+        }
+      }
+
+      return updatedUrls;
+    });
+  }, []);
+
+  const { isConnected } = useWebSocket({
+    onStatusUpdate: handleStatusUpdate,
   });
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isMountedRef = useRef(true);
-
-  const fetchURLs = async () => {
+  const fetchURLs = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const params = {
-        page,
-        limit,
-        ...(search && { search }),
-        ...(status && status !== 'all' && { status }),
-      };
+      const response: PaginatedResponse<URLAnalysis> = await APIService.getURLs(
+        {
+          page,
+          limit,
+          search,
+          status: status === 'all' ? undefined : status,
+        }
+      );
 
-      const response = await APIService.getURLs(params);
-
-      if (isMountedRef.current) {
-        setUrls(response.data);
-        setPagination({
-          page: response.page,
-          limit: response.limit,
-          total: response.total,
-          totalPages: response.total_pages,
-        });
-      }
+      setUrls(response.data);
+      setTotalCount(response.total);
+      setTotalPages(response.total_pages);
     } catch (err) {
-      if (isMountedRef.current) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Erro ao carregar URLs';
-        setError(errorMessage);
-        toast.error(errorMessage);
-      }
+      setError(err instanceof Error ? err.message : 'Failed to fetch URLs');
+      console.error('Error fetching URLs:', err);
     } finally {
-      if (isMountedRef.current) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-  };
+  }, [page, limit, search, status]);
 
-  const stopPolling = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    isMountedRef.current = true;
-    fetchURLs();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-      stopPolling();
-    };
-  }, []);
-
-  const refetch = async () => {
-    await fetchURLs();
-  };
-
-  const addURL = async (url: string) => {
+  const addURL = useCallback(async (url: string) => {
     try {
       const newURL = await APIService.addURL({ url });
-
-      setUrls((prevUrls) => [newURL, ...prevUrls]);
-
-      toast.success('URL adicionada com sucesso!');
+      setUrls((prevUrls) => [newURL, ...(prevUrls || [])]);
+      return newURL;
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Erro ao adicionar URL';
-      toast.error(errorMessage);
+      console.error('Error adding URL:', err);
       throw err;
     }
-  };
+  }, []);
 
-  const deleteURL = async (id: number) => {
+  const deleteURL = useCallback(async (id: number) => {
     try {
       await APIService.deleteURL(id);
-      toast.success('URL removida com sucesso!');
-      setUrls((prevUrls) => prevUrls.filter((url) => url.id !== id));
+      setUrls((prevUrls) => (prevUrls || []).filter((url) => url.id !== id));
       setSelectedURLs((prev) => prev.filter((selectedId) => selectedId !== id));
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Erro ao remover URL';
-      toast.error(errorMessage);
+      console.error('Error deleting URL:', err);
       throw err;
     }
-  };
+  }, []);
 
-  const toggleSelect = (id: number) => {
+  const bulkDelete = useCallback(async (ids: number[]) => {
+    try {
+      await APIService.bulkDelete(ids);
+      setUrls((prevUrls) =>
+        (prevUrls || []).filter((url) => !ids.includes(url.id))
+      );
+      setSelectedURLs([]);
+    } catch (err) {
+      console.error('Error bulk deleting URLs:', err);
+      throw err;
+    }
+  }, []);
+
+  const bulkAnalyze = useCallback(async (ids: number[]) => {
+    try {
+      await APIService.bulkAnalyze(ids);
+      // Status updates will come through WebSocket
+    } catch (err) {
+      console.error('Error bulk analyzing URLs:', err);
+      throw err;
+    }
+  }, []);
+
+  const analyzeURL = useCallback(async (id: number) => {
+    try {
+      await APIService.analyzeURL(id);
+      // Status updates will come through WebSocket
+    } catch (err) {
+      console.error('Error analyzing URL:', err);
+      throw err;
+    }
+  }, []);
+
+  const toggleSelect = useCallback((id: number) => {
     setSelectedURLs((prev) =>
       prev.includes(id)
         ? prev.filter((selectedId) => selectedId !== id)
         : [...prev, id]
     );
-  };
+  }, []);
 
-  const selectAll = () => {
-    setSelectedURLs(urls.map((url) => url.id));
-  };
-
-  const clearSelection = () => {
+  const clearSelection = useCallback(() => {
     setSelectedURLs([]);
-  };
+  }, []);
+
+  const selectAll = useCallback(() => {
+    setSelectedURLs(urls.map((url) => url.id));
+  }, [urls]);
+
+  const exportData = useCallback(async (format: 'csv' | 'json' = 'csv') => {
+    try {
+      const blob = await APIService.exportURLs(format);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `urls.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error exporting data:', err);
+      throw err;
+    }
+  }, []);
+
+  const importData = useCallback(
+    async (file: File) => {
+      try {
+        await APIService.importURLs(file);
+        await fetchURLs(); // Refresh the list
+      } catch (err) {
+        console.error('Error importing data:', err);
+        throw err;
+      }
+    },
+    [fetchURLs]
+  );
+
+  useEffect(() => {
+    fetchURLs();
+  }, [fetchURLs]);
+
+  useEffect(() => {
+    if (autoRefresh && !isConnected) {
+      const interval = setInterval(fetchURLs, refreshInterval);
+      return () => clearInterval(interval);
+    }
+  }, [autoRefresh, refreshInterval, isConnected, fetchURLs]);
 
   return {
     urls,
     loading,
     error,
-    pagination,
     selectedURLs,
-    refetch,
+    totalCount,
+    totalPages,
+    isConnected,
     addURL,
     deleteURL,
+    bulkDelete,
+    bulkAnalyze,
+    analyzeURL,
     toggleSelect,
-    selectAll,
     clearSelection,
+    selectAll,
+    exportData,
+    importData,
+    refetch: fetchURLs,
   };
 };
