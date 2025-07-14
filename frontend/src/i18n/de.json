@@ -1,0 +1,181 @@
+{
+  "common": {
+    "loading": "Lädt...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "delete": "Löschen",
+    "save": "Speichern",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "yes": "Ja",
+    "no": "Nein",
+    "refresh": "Aktualisieren",
+    "retry": "Wiederholen",
+    "previous": "Vorherige",
+    "next": "Nächste",
+    "back": "Zurück",
+    "actions": "Aktionen"
+  },
+  "header": {
+    "title": "Website Analyzer",
+    "subtitle": "Kostenlose Website-Analyse",
+    "dashboard": "Dashboard"
+  },
+  "dashboard": {
+    "title": "Website Analyzer",
+    "subtitle": "Websites einfach analysieren und überwachen",
+    "processing": "verarbeitet",
+    "refresh": "Aktualisieren",
+    "addUrl": "URL hinzufügen",
+    "stats": {
+      "totalUrls": "URLs gesamt",
+      "processing": "Verarbeitung",
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen"
+    },
+    "filters": {
+      "searchPlaceholder": "Nach URL oder Titel suchen...",
+      "allStatuses": "Alle Status",
+      "pending": "Ausstehend",
+      "processing": "Verarbeitung",
+      "completed": "Abgeschlossen",
+      "error": "Fehler",
+      "itemsPerPage": "pro Seite"
+    },
+    "table": {
+      "urls": "URLs",
+      "showing": "Zeige {{start}}-{{end}} von {{total}}",
+      "title": "Titel",
+      "noTitle": "Kein Titel",
+      "htmlVersion": "HTML Version",
+      "links": "Links",
+      "internal": "Intern",
+      "external": "Extern",
+      "broken": "Defekt",
+      "headingTags": "Überschriften-Tags",
+      "loginForm": "Login-Formular",
+      "status": "Status",
+      "details": "Details",
+      "delete": "Löschen"
+    },
+    "pagination": {
+      "page": "Seite {{current}} von {{total}}"
+    },
+    "empty": {
+      "title": "Keine URLs gefunden",
+      "noResults": "Versuchen Sie, die Filter anzupassen oder eine neue URL hinzuzufügen.",
+      "noUrls": "Beginnen Sie mit dem Hinzufügen einer URL zur Analyse."
+    },
+    "language": "Sprache"
+  },
+  "addUrl": {
+    "title": "Neue URL zur Analyse hinzufügen",
+    "urlLabel": "Website URL",
+    "placeholder": "example.com, facebook.com, oder www.google.com",
+    "helper": "Geben Sie nur die Domain ein - https:// wird automatisch hinzugefügt",
+    "preview": "Endgültige URL",
+    "enterUrl": "URL eingeben",
+    "invalidUrl": "Geben Sie eine gültige Domain ein (z.B. facebook.com, www.google.com)",
+    "validation": {
+      "valid": "✓ Gültige Domain - bereit zur Analyse",
+      "invalid": "✗ Ungültiges Domain-Format"
+    },
+    "analysisInfo": {
+      "title": "Was wird analysiert:",
+      "htmlVersion": "HTML-Version erkennen",
+      "pageTitle": "Seitentitel extrahieren",
+      "headings": "Überschriften-Tags zählen (H1-H6)",
+      "links": "Interne vs. externe Links",
+      "brokenLinks": "Defekte Links erkennen",
+      "loginForm": "Login-Formular vorhanden"
+    },
+    "addAndAnalyze": "Hinzufügen & Analysieren"
+  },
+  "urlDetails": {
+    "title": "URL-Analyse",
+    "reanalyze": "Neu analysieren",
+    "visitSite": "Website besuchen",
+    "summary": {
+      "status": "Status",
+      "analyzedAt": "Analysiert am {{date}}",
+      "neverAnalyzed": "Nie analysiert",
+      "basicInfo": "Grundinformationen",
+      "title": "Titel",
+      "htmlVersion": "HTML Version",
+      "loginForm": "Login-Formular",
+      "linksSummary": "Links-Zusammenfassung",
+      "total": "Gesamt",
+      "internal": "Intern",
+      "external": "Extern",
+      "broken": "Defekt"
+    },
+    "charts": {
+      "linksDistribution": "Links-Verteilung",
+      "headingsDistribution": "Überschriften-Verteilung",
+      "internalLinks": "Interne Links",
+      "externalLinks": "Externe Links",
+      "brokenLinks": "Defekte Links"
+    },
+    "brokenLinks": {
+      "title": "Defekte Links ({{count}})",
+      "url": "URL",
+      "statusCode": "Statuscode",
+      "type": "Typ",
+      "test": "Testen",
+      "link": "Link"
+    },
+    "noBrokenLinks": {
+      "title": "Keine defekten Links gefunden!",
+      "message": "Alle Links auf dieser Seite funktionieren korrekt."
+    },
+    "notFound": "URL nicht gefunden",
+    "loadingDetails": "Details werden geladen..."
+  },
+  "status": {
+    "queued": "Warteschlange",
+    "processing": "Verarbeitung",
+    "completed": "Abgeschlossen",
+    "error": "Fehler"
+  },
+  "bulkActions": {
+    "selectedUrls": "{{count}} URL ausgewählt",
+    "selectedUrlsPlural": "{{count}} URLs ausgewählt",
+    "clearSelection": "Auswahl löschen",
+    "reanalyze": "Neu analysieren",
+    "exportCsv": "CSV exportieren",
+    "importUrls": "URLs importieren",
+    "confirmDelete": "Löschung bestätigen",
+    "deleteMessage": "Sind Sie sicher, dass Sie {{count}} URL löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteMessagePlural": "Sind Sie sicher, dass Sie {{count}} URLs löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "import": {
+      "title": "URLs importieren",
+      "selectFile": "CSV-Datei auswählen",
+      "fileHelper": "Die Datei muss eine 'url'-Spalte mit den URLs zur Analyse enthalten.",
+      "expectedFormat": "Erwartetes Format:",
+      "import": "Importieren"
+    },
+    "selectUrls": "URLs für Massenaktionen auswählen"
+  },
+  "messages": {
+    "urlAdded": "URL erfolgreich hinzugefügt!",
+    "urlDeleted": "URL erfolgreich gelöscht!",
+    "analysisStarted": "URL-Analyse gestartet!",
+    "reanalysisStarted": "Neuanalyse erfolgreich gestartet!",
+    "errorAddingUrl": "Fehler beim Hinzufügen der URL",
+    "errorLoadingDetails": "Fehler beim Laden der URL-Details",
+    "errorStartingReanalysis": "Fehler beim Starten der Neuanalyse",
+    "errorBulkAnalyze": "Fehler beim Analysieren der ausgewählten URLs",
+    "errorBulkDelete": "Fehler beim Löschen der ausgewählten URLs",
+    "errorExporting": "Fehler beim Exportieren der Daten",
+    "errorImporting": "Fehler beim Importieren der URLs"
+  },
+  "errorBoundary": {
+    "title": "Ups! Etwas ist schief gelaufen",
+    "message": "Ein unerwarteter Fehler ist aufgetreten. Unser Team wurde benachrichtigt und arbeitet daran, das Problem zu lösen.",
+    "retryButton": "Erneut versuchen",
+    "reloadButton": "Seite neu laden",
+    "errorDetails": "Fehlerdetails (Entwicklung)"
+  }
+}

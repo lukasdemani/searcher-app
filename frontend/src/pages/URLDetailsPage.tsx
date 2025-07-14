@@ -20,7 +20,6 @@ import StatusBadge from '../components/ui/StatusBadge';
 import { APIService } from '../services/api';
 import { BrokenLink, URLAnalysis } from '../types';
 
-// ✅ Change to default export for React.lazy compatibility
 const URLDetailsPage: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();

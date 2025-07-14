@@ -1,0 +1,181 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "save": "Save",
+    "edit": "Edit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "previous": "Previous",
+    "next": "Next",
+    "back": "Back",
+    "actions": "Actions"
+  },
+  "header": {
+    "title": "Website Analyzer",
+    "subtitle": "Free website analysis",
+    "dashboard": "Dashboard"
+  },
+  "dashboard": {
+    "title": "Website Analyzer",
+    "subtitle": "Analyze and monitor websites with ease",
+    "processing": "processing",
+    "refresh": "Refresh",
+    "addUrl": "Add URL",
+    "stats": {
+      "totalUrls": "Total URLs",
+      "processing": "Processing",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by URL or title...",
+      "allStatuses": "All statuses",
+      "pending": "Pending",
+      "processing": "Processing",
+      "completed": "Completed",
+      "error": "Error",
+      "itemsPerPage": "per page"
+    },
+    "table": {
+      "urls": "URLs",
+      "showing": "Showing {{start}}-{{end}} of {{total}}",
+      "title": "Title",
+      "noTitle": "No title",
+      "htmlVersion": "HTML Version",
+      "links": "Links",
+      "internal": "Internal",
+      "external": "External",
+      "broken": "Broken",
+      "headingTags": "Heading Tags",
+      "loginForm": "Login Form",
+      "status": "Status",
+      "details": "Details",
+      "delete": "Delete"
+    },
+    "pagination": {
+      "page": "Page {{current}} of {{total}}"
+    },
+    "empty": {
+      "title": "No URLs found",
+      "noResults": "Try adjusting the filters or adding a new URL.",
+      "noUrls": "Start by adding a URL for analysis."
+    },
+    "language": "Language"
+  },
+  "addUrl": {
+    "title": "Add New URL for Analysis",
+    "urlLabel": "Website URL",
+    "placeholder": "example.com, facebook.com, or www.google.com",
+    "helper": "Just enter the domain - https:// will be added automatically",
+    "preview": "Final URL",
+    "enterUrl": "Enter a URL",
+    "invalidUrl": "Enter a valid domain (e.g., facebook.com, www.google.com)",
+    "validation": {
+      "valid": "✓ Valid domain - ready to analyze",
+      "invalid": "✗ Invalid domain format"
+    },
+    "analysisInfo": {
+      "title": "What will be analyzed:",
+      "htmlVersion": "HTML version detection",
+      "pageTitle": "Page title extraction",
+      "headings": "Heading tags count (H1-H6)",
+      "links": "Internal vs external links",
+      "brokenLinks": "Broken links detection",
+      "loginForm": "Login form presence"
+    },
+    "addAndAnalyze": "Add & Analyze"
+  },
+  "urlDetails": {
+    "title": "URL Analysis",
+    "reanalyze": "Reanalyze",
+    "visitSite": "Visit Site",
+    "summary": {
+      "status": "Status",
+      "analyzedAt": "Analyzed on {{date}}",
+      "neverAnalyzed": "Never analyzed",
+      "basicInfo": "Basic Information",
+      "title": "Title",
+      "htmlVersion": "HTML Version",
+      "loginForm": "Login Form",
+      "linksSummary": "Links Summary",
+      "total": "Total",
+      "internal": "Internal",
+      "external": "External",
+      "broken": "Broken"
+    },
+    "charts": {
+      "linksDistribution": "Links Distribution",
+      "headingsDistribution": "Headings Distribution",
+      "internalLinks": "Internal Links",
+      "externalLinks": "External Links",
+      "brokenLinks": "Broken Links"
+    },
+    "brokenLinks": {
+      "title": "Broken Links ({{count}})",
+      "url": "URL",
+      "statusCode": "Status Code",
+      "type": "Type",
+      "test": "Test",
+      "link": "Link"
+    },
+    "noBrokenLinks": {
+      "title": "No broken links found!",
+      "message": "All links on this page are working correctly."
+    },
+    "notFound": "URL not found",
+    "loadingDetails": "Loading details..."
+  },
+  "status": {
+    "queued": "Queued",
+    "processing": "Processing",
+    "completed": "Completed",
+    "error": "Error"
+  },
+  "bulkActions": {
+    "selectedUrls": "{{count}} URL selected",
+    "selectedUrlsPlural": "{{count}} URLs selected",
+    "clearSelection": "Clear selection",
+    "reanalyze": "Reanalyze",
+    "exportCsv": "Export CSV",
+    "importUrls": "Import URLs",
+    "confirmDelete": "Confirm deletion",
+    "deleteMessage": "Are you sure you want to delete {{count}} URL? This action cannot be undone.",
+    "deleteMessagePlural": "Are you sure you want to delete {{count}} URLs? This action cannot be undone.",
+    "import": {
+      "title": "Import URLs",
+      "selectFile": "Select a CSV file",
+      "fileHelper": "The file must contain a 'url' column with the URLs for analysis.",
+      "expectedFormat": "Expected format:",
+      "import": "Import"
+    },
+    "selectUrls": "Select URLs for bulk actions"
+  },
+  "messages": {
+    "urlAdded": "URL added successfully!",
+    "urlDeleted": "URL deleted successfully!",
+    "analysisStarted": "URL analysis started!",
+    "reanalysisStarted": "Reanalysis started successfully!",
+    "errorAddingUrl": "Error adding URL",
+    "errorLoadingDetails": "Error loading URL details",
+    "errorStartingReanalysis": "Error starting reanalysis",
+    "errorBulkAnalyze": "Error analyzing selected URLs",
+    "errorBulkDelete": "Error deleting selected URLs",
+    "errorExporting": "Error exporting data",
+    "errorImporting": "Error importing URLs"
+  },
+  "errorBoundary": {
+    "title": "Oops! Something went wrong",
+    "message": "An unexpected error occurred. Our team has been notified and is working to resolve the issue.",
+    "retryButton": "Try again",
+    "reloadButton": "Reload page",
+    "errorDetails": "Error details (development)"
+  }
+}
