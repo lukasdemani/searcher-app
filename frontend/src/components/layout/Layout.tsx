@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../ui/LanguageSelector';
+import { NavigationIcon } from '../icons';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -7,6 +10,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const { t } = useTranslation();
 
   const isActivePath = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
@@ -20,12 +24,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex items-center">
               <Link to="/" className="flex-shrink-0 flex items-center">
                 <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
+                  <NavigationIcon className="h-5 w-5 text-white" />
                 </div>
                 <span className="ml-2 text-xl font-bold text-gray-900">
-                  Website Analyzer
+                  {t('header.title')}
                 </span>
               </Link>
 
@@ -38,24 +40,25 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  Dashboard
+                  {t('header.dashboard')}
                 </Link>
               </div>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-500">
-                Análise de websites gratuita
+                {t('header.subtitle')}
               </span>
+              <LanguageSelector />
             </div>
           </div>
         </div>
+      </nav>
 
+      {/* Main content */}
       <main className="flex-1">
         {children}
       </main>
-
-
     </div>
   );
 }; 
