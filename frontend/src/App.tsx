@@ -9,7 +9,7 @@ import {
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { Layout } from './components/layout/Layout';
-import OfflineIndicator from './components/ui/OfflineIndicator';
+import OfflineIndicator from './components/ui/ OfflineIndicator';
 
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const URLDetailsPage = React.lazy(() => import('./pages/URLDetailsPage'));

@@ -1,11 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
 import toast from 'react-hot-toast';
+import i18n from '../i18n';
 import {
+  BrokenLink,
   PaginatedResponse,
   SuccessResponse,
   URLAnalysis,
   URLRequest,
-  User,
 } from '../types';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
@@ -20,7 +21,7 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error.response?.data?.error || 'Ocorreu um erro';
+    const message = error.response?.data?.error || i18n.t('common.error');
     toast.error(message);
 
     return Promise.reject(error);
@@ -28,14 +29,6 @@ api.interceptors.response.use(
 );
 
 export class APIService {
-  static async getProfile(): Promise<User> {
-    return {
-      id: 1,
-      username: 'public_user',
-      created_at: new Date().toISOString(),
-    };
-  }
-
   static async getURLs(params?: {
     page?: number;
     limit?: number;
@@ -167,24 +160,18 @@ export class APIService {
     const response: AxiosResponse<{ data: URLAnalysis; message: string }> =
       await api.post('/urls', urlData);
 
-    toast.success('URL added successfully!');
+    toast.success(i18n.t('messages.urlAdded'));
     return response.data.data;
   }
 
   static async analyzeURL(id: number): Promise<void> {
     await api.put(`/urls/${id}/analyze`);
-    toast.success('URL analysis started!');
+    toast.success(i18n.t('messages.analysisStarted'));
   }
 
-  async deleteURL(id: number) {
-    return await this.request.delete(`${this.baseURL}/urls/${id}`);
-  }
-
-  static async healthCheck(): Promise<{ status: string }> {
-    const response = await axios.get(
-      `${API_BASE_URL.replace('/api', '')}/health`
-    );
-    return response.data;
+  static async deleteURL(id: number): Promise<void> {
+    await api.delete(`/urls/${id}`);
+    toast.success(i18n.t('messages.urlDeleted'));
   }
 
   static async bulkAnalyze(ids: number[]): Promise<SuccessResponse> {
@@ -192,7 +179,7 @@ export class APIService {
       const response = await api.post('/urls/bulk-analyze', { ids });
       return response.data;
     } catch (error) {
-      throw new Error('messages.errorBulkAnalyze');
+      throw new Error(i18n.t('messages.errorBulkAnalyze'));
     }
   }
 
@@ -201,8 +188,19 @@ export class APIService {
       const response = await api.post('/urls/bulk-delete', { ids });
       return response.data;
     } catch (error) {
-      throw new Error('messages.errorBulkDelete');
+      throw new Error(i18n.t('messages.errorBulkDelete'));
     }
+  }
+
+  static async getBrokenLinks(urlId: number): Promise<BrokenLink[]> {
+    return [];
+  }
+
+  static async healthCheck(): Promise<{ status: string }> {
+    const response = await axios.get(
+      `${API_BASE_URL.replace('/api', '')}/health`
+    );
+    return response.data;
   }
 }
 
