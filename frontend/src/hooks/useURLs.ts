@@ -120,7 +120,6 @@ export const useURLs = (options: UseURLsOptions = {}) => {
   const bulkAnalyze = useCallback(async (ids: number[]) => {
     try {
       await APIService.bulkAnalyze(ids);
-      // Status updates will come through WebSocket
     } catch (err) {
       console.error('Error bulk analyzing URLs:', err);
       throw err;
@@ -130,7 +129,6 @@ export const useURLs = (options: UseURLsOptions = {}) => {
   const analyzeURL = useCallback(async (id: number) => {
     try {
       await APIService.analyzeURL(id);
-      // Status updates will come through WebSocket
     } catch (err) {
       console.error('Error analyzing URL:', err);
       throw err;
@@ -152,36 +150,6 @@ export const useURLs = (options: UseURLsOptions = {}) => {
   const selectAll = useCallback(() => {
     setSelectedURLs(urls.map((url) => url.id));
   }, [urls]);
-
-  const exportData = useCallback(async (format: 'csv' | 'json' = 'csv') => {
-    try {
-      const blob = await APIService.exportURLs(format);
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `urls.${format}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Error exporting data:', err);
-      throw err;
-    }
-  }, []);
-
-  const importData = useCallback(
-    async (file: File) => {
-      try {
-        await APIService.importURLs(file);
-        await fetchURLs(); // Refresh the list
-      } catch (err) {
-        console.error('Error importing data:', err);
-        throw err;
-      }
-    },
-    [fetchURLs]
-  );
 
   useEffect(() => {
     fetchURLs();
@@ -210,8 +178,6 @@ export const useURLs = (options: UseURLsOptions = {}) => {
     toggleSelect,
     clearSelection,
     selectAll,
-    exportData,
-    importData,
     refetch: fetchURLs,
   };
 };

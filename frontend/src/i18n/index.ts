@@ -3,6 +3,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 import deTranslations from './locales/de.json';
 import enTranslations from './locales/en.json';
+
 const resources = {
   en: {
     translation: enTranslations,
@@ -11,6 +12,7 @@ const resources = {
     translation: deTranslations,
   },
 };
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -29,4 +31,5 @@ i18n
       caches: ['localStorage'],
     },
   });
+
 export default i18n;

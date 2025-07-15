@@ -123,4 +123,12 @@ export interface UseURLsReturn {
   reanalyzeURL: (id: number) => Promise<void>;
   bulkAnalyze: (ids: number[]) => Promise<void>;
   bulkDelete: (ids: number[]) => Promise<void>;
-} 
+}
+
+export interface BrokenLink {
+  id: number;
+  url_id: number;
+  link_url: string;
+  status_code: number;
+  error_message?: string;
+}
