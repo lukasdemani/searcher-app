@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import LanguageSelector from '../ui/LanguageSelector';
+import { Link, useLocation } from 'react-router-dom';
 import { NavigationIcon } from '../icons';
+import LanguageSelector from '../ui/LanguageSelector';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,27 +13,29 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { t } = useTranslation();
 
   const isActivePath = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/');
+    return (
+      location.pathname === path || location.pathname.startsWith(path + '/')
+    );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0 flex items-center">
-                <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <NavigationIcon className="h-5 w-5 text-white" />
+    <div className='min-h-screen bg-gray-50'>
+      <nav className='bg-white shadow-sm border-b border-gray-200'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='flex justify-between h-16'>
+            <div className='flex items-center'>
+              <Link to='/' className='flex-shrink-0 flex items-center'>
+                <div className='h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center'>
+                  <NavigationIcon className='h-5 w-5 text-white' />
                 </div>
-                <span className="ml-2 text-xl font-bold text-gray-900">
+                <span className='ml-2 text-xl font-bold text-gray-900'>
                   {t('header.title')}
                 </span>
               </Link>
 
-              <div className="hidden md:ml-6 md:flex md:space-x-8">
+              <div className='hidden md:ml-6 md:flex md:space-x-8'>
                 <Link
-                  to="/"
+                  to='/'
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                     isActivePath('/')
                       ? 'border-blue-500 text-gray-900'
@@ -45,8 +47,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-500">
+            <div className='flex items-center space-x-4'>
+              <span className='text-sm text-gray-500'>
                 {t('header.subtitle')}
               </span>
               <LanguageSelector />
@@ -56,9 +58,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </nav>
 
       {/* Main content */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className='flex-1'>{children}</main>
     </div>
   );
-}; 
+};
