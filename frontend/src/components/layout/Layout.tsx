@@ -57,7 +57,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </nav>
 
-      {/* Main content */}
       <main className='flex-1'>{children}</main>
     </div>
   );
