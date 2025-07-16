@@ -13,7 +13,6 @@ services:
       - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./backend/migrations:/docker-entrypoint-initdb.d
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       timeout: 20s
@@ -49,7 +48,7 @@ services:
     environment:
       - REACT_APP_API_BASE_URL=http://localhost:8080/api
     ports:
-      - '3000:3000'
+      - '5174:5174'
     depends_on:
       - backend
     volumes:
