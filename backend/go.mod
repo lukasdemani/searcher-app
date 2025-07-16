@@ -1,4 +1,4 @@
-module website-analyzer
+module seacher-app
 
 go 1.23.0
 

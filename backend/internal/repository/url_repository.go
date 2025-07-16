@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"website-analyzer/internal/models"
+	"seacher-app/internal/models"
 )
 
 type URLRepository interface {

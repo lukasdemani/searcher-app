@@ -10,12 +10,12 @@ import (
 	"syscall"
 	"time"
 
-	"website-analyzer/internal/database"
-	"website-analyzer/internal/handlers"
-	"website-analyzer/internal/middleware"
-	"website-analyzer/internal/repository"
-	"website-analyzer/internal/services"
-	"website-analyzer/internal/worker"
+	"seacher-app/internal/database"
+	"seacher-app/internal/handlers"
+	"seacher-app/internal/middleware"
+	"seacher-app/internal/repository"
+	"seacher-app/internal/services"
+	"seacher-app/internal/worker"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

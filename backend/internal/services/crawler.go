@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"golang.org/x/net/html"
-	"website-analyzer/internal/models"
+	"seacher-app/internal/models"
 )
 
 type CrawlerService struct {
