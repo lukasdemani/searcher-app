@@ -48,7 +48,7 @@ services:
     environment:
       - REACT_APP_API_BASE_URL=http://localhost:8080/api
     ports:
-      - '5174:5174'
+      - '5173:5173'
     depends_on:
       - backend
     volumes:

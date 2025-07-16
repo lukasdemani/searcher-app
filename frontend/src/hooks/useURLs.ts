@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { APIService } from '../services/api';
-import { PaginatedResponse, URLAnalysis } from '../types';
+import APIService from '../services/api';
 import { useWebSocket } from './useWebSocket';
+
+export type URLStatus = 'queued' | 'processing' | 'completed' | 'error';
 
 interface UseURLsOptions {
   page?: number;
@@ -10,6 +11,35 @@ interface UseURLsOptions {
   status?: string;
   autoRefresh?: boolean;
   refreshInterval?: number;
+}
+
+export interface URLAnalysis {
+  id: number;
+  url: string;
+  title?: string;
+  html_version?: string;
+  h1_count: number;
+  h2_count: number;
+  h3_count: number;
+  h4_count: number;
+  h5_count: number;
+  h6_count: number;
+  internal_links_count: number;
+  external_links_count: number;
+  broken_links_count: number;
+  has_login_form: boolean;
+  status: URLStatus;
+  error_message?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  page: number;
+  limit: number;
+  total: number;
+  total_pages: number;
 }
 
 export const useURLs = (options: UseURLsOptions = {}) => {

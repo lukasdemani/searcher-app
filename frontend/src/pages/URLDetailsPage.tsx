@@ -17,8 +17,8 @@ import {
 import { ChevronLeftIcon, NoResultsIcon } from '../components/icons';
 import Button from '../components/ui/Button';
 import StatusBadge from '../components/ui/StatusBadge';
-import { APIService } from '../services/api';
-import { BrokenLink, URLAnalysis } from '../types';
+import APIService from '../services/api';
+import { BrokenLink, URLAnalysis } from '../types/types';
 
 const URLDetailsPage: React.FC = () => {
   const { t } = useTranslation();

@@ -64,7 +64,7 @@ func main() {
 		RetryDelay:          1 * time.Second,
 	}
 
-	crawlerService := services.NewCrawlerService(urlRepo, workerPool, crawlerConfig, logger)
+	crawlerService := services.CrawlerService(db.DB)
 
 	wsHandler := handlers.NewWebSocketHandler()
 	go wsHandler.Run()
@@ -74,30 +74,13 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
-		AllowCredentials: true,
 	}))
 
 	r.Use(middleware.APIRateLimitMiddleware())
 
 	r.Use(middleware.ValidationMiddleware())
-
-	r.GET("/health", func(c *gin.Context) {
-		dbStatus := "healthy"
-		if err := db.HealthCheck(ctx); err != nil {
-			dbStatus = "unhealthy"
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"status":    "healthy",
-			"message":   "Website Analyzer API is running",
-			"database":  dbStatus,
-			"workers":   workerPool.GetStats(),
-			"timestamp": time.Now().UTC(),
-		})
-	})
 
 	r.GET("/ws", wsHandler.HandleWebSocket)
 

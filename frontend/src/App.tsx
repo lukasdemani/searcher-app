@@ -32,9 +32,10 @@ const LazyLoadErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
 );
 
 function App() {
+  console.log('app');
   return (
-    <ErrorBoundary>
-      <OfflineIndicator />
+    // <ErrorBoundary>
+      //<OfflineIndicator />
 
       <Router>
         <div className='App'>
@@ -69,7 +70,7 @@ function App() {
           </Routes>
         </div>
       </Router>
-    </ErrorBoundary>
+    //</ErrorBoundary>
   );
 }
 

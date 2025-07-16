@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { URLStatus } from '../types';
 
 interface StatusUpdate {
   type: string;
@@ -8,16 +7,18 @@ interface StatusUpdate {
   data?: any;
 }
 
+export type URLStatus = 'queued' | 'processing' | 'completed' | 'error';
+
 interface UseWebSocketProps {
   onStatusUpdate?: (update: StatusUpdate) => void;
   reconnectInterval?: number;
   maxReconnectAttempts?: number;
 }
 
-export const useWebSocket = ({ 
-  onStatusUpdate, 
+export const useWebSocket = ({
+  onStatusUpdate,
   reconnectInterval = 5000,
-  maxReconnectAttempts = 5 
+  maxReconnectAttempts = 5,
 }: UseWebSocketProps = {}) => {
   const [isConnected, setIsConnected] = useState(false);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
@@ -30,7 +31,7 @@ export const useWebSocket = ({
     try {
       const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:8080/ws';
       const ws = new WebSocket(wsUrl);
-      
+
       ws.onopen = () => {
         console.log('WebSocket connected');
         setIsConnected(true);
@@ -43,7 +44,7 @@ export const useWebSocket = ({
         try {
           const update: StatusUpdate = JSON.parse(event.data);
           console.log('WebSocket message received:', update);
-          
+
           if (onStatusUpdate && update.type === 'status_update') {
             onStatusUpdate(update);
           }
@@ -57,12 +58,17 @@ export const useWebSocket = ({
         setIsConnected(false);
         wsRef.current = null;
 
-        if (event.code !== 1000 && reconnectAttemptsRef.current < maxReconnectAttempts) {
+        if (
+          event.code !== 1000 &&
+          reconnectAttemptsRef.current < maxReconnectAttempts
+        ) {
           reconnectAttemptsRef.current++;
           setReconnectAttempts(reconnectAttemptsRef.current);
-          
-          console.log(`Reconnecting... (${reconnectAttemptsRef.current}/${maxReconnectAttempts})`);
-          
+
+          console.log(
+            `Reconnecting... (${reconnectAttemptsRef.current}/${maxReconnectAttempts})`
+          );
+
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
           }, reconnectInterval);
@@ -87,12 +93,12 @@ export const useWebSocket = ({
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
     }
-    
+
     if (wsRef.current) {
       wsRef.current.close(1000, 'Manual disconnect');
       wsRef.current = null;
     }
-    
+
     setIsConnected(false);
   };
 
@@ -118,6 +124,6 @@ export const useWebSocket = ({
     reconnectAttempts,
     connect,
     disconnect,
-    sendMessage
+    sendMessage,
   };
-}; 
+};

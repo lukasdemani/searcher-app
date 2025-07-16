@@ -14,11 +14,11 @@ import (
 )
 
 type URLHandler struct {
-	crawlerService services.CrawlerService
+	crawlerService *service.CrawlerService
 	wsHandler      *WebSocketHandler
 }
 
-func NewURLHandler(crawlerService services.CrawlerService, wsHandler *WebSocketHandler) *URLHandler {
+func NewURLHandler(crawlerService *service.CrawlerService, wsHandler *WebSocketHandler) *URLHandler {
 	return &URLHandler{
 		crawlerService: crawlerService,
 		wsHandler:      wsHandler,

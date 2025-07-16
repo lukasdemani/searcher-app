@@ -1,15 +1,57 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 import i18n from '../i18n';
-import {
-  BrokenLink,
-  PaginatedResponse,
-  SuccessResponse,
-  URLAnalysis,
-  URLRequest,
-} from '../types';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
+const API_BASE_URL = 'http://localhost:8080/api';
+console.log(API_BASE_URL);
+
+export interface BrokenLink {
+  id: number;
+  url_id: number;
+  link_url: string;
+  status_code: number;
+  error_message?: string;
+}
+
+export type URLStatus = 'queued' | 'processing' | 'completed' | 'error';
+
+export interface URLAnalysis {
+  id: number;
+  url: string;
+  title?: string;
+  html_version?: string;
+  h1_count: number;
+  h2_count: number;
+  h3_count: number;
+  h4_count: number;
+  h5_count: number;
+  h6_count: number;
+  internal_links_count: number;
+  external_links_count: number;
+  broken_links_count: number;
+  has_login_form: boolean;
+  status: URLStatus;
+  error_message?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface URLRequest {
+  url: string;
+}
+
+export interface SuccessResponse {
+  message: string;
+  data?: any;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  page: number;
+  limit: number;
+  total: number;
+  total_pages: number;
+}
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -28,180 +70,198 @@ api.interceptors.response.use(
   }
 );
 
-export class APIService {
-  static async getURLs(params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    status?: string;
-  }): Promise<PaginatedResponse<URLAnalysis>> {
-    try {
-      const response = await api.get('/urls', { params });
-      return response.data;
-    } catch (error) {
-      const mockURLs: URLAnalysis[] = [
-        {
-          id: 1,
-          url: 'https://example.com',
-          title: 'Example Domain',
-          html_version: 'HTML5',
-          h1_count: 1,
-          h2_count: 2,
-          h3_count: 3,
-          h4_count: 0,
-          h5_count: 0,
-          h6_count: 0,
-          internal_links_count: 5,
-          external_links_count: 3,
-          broken_links_count: 0,
-          has_login_form: false,
-          status: 'completed',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          url: 'https://google.com',
-          title: 'Google',
-          html_version: 'HTML5',
-          h1_count: 1,
-          h2_count: 0,
-          h3_count: 1,
-          h4_count: 0,
-          h5_count: 0,
-          h6_count: 0,
-          internal_links_count: 15,
-          external_links_count: 8,
-          broken_links_count: 0,
-          has_login_form: false,
-          status: 'processing',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 3,
-          url: 'https://github.com',
-          title: 'GitHub',
-          html_version: 'HTML5',
-          h1_count: 2,
-          h2_count: 4,
-          h3_count: 6,
-          h4_count: 2,
-          h5_count: 0,
-          h6_count: 0,
-          internal_links_count: 25,
-          external_links_count: 12,
-          broken_links_count: 2,
-          has_login_form: true,
-          status: 'completed',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 4,
-          url: 'https://invalid-site.test',
-          title: '',
-          html_version: '',
-          h1_count: 0,
-          h2_count: 0,
-          h3_count: 0,
-          h4_count: 0,
-          h5_count: 0,
-          h6_count: 0,
-          internal_links_count: 0,
-          external_links_count: 0,
-          broken_links_count: 0,
-          has_login_form: false,
-          status: 'error',
-          error_message: 'Site não acessível',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ];
+// Mock data for fallback scenarios
+const createMockURLs = (): URLAnalysis[] => [
+  {
+    id: 1,
+    url: 'https://example.com',
+    title: 'Example Domain',
+    html_version: 'HTML5',
+    h1_count: 1,
+    h2_count: 2,
+    h3_count: 3,
+    h4_count: 0,
+    h5_count: 0,
+    h6_count: 0,
+    internal_links_count: 5,
+    external_links_count: 3,
+    broken_links_count: 0,
+    has_login_form: false,
+    status: 'completed',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    url: 'https://google.com',
+    title: 'Google',
+    html_version: 'HTML5',
+    h1_count: 1,
+    h2_count: 0,
+    h3_count: 1,
+    h4_count: 0,
+    h5_count: 0,
+    h6_count: 0,
+    internal_links_count: 15,
+    external_links_count: 8,
+    broken_links_count: 0,
+    has_login_form: false,
+    status: 'processing',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 3,
+    url: 'https://github.com',
+    title: 'GitHub',
+    html_version: 'HTML5',
+    h1_count: 2,
+    h2_count: 4,
+    h3_count: 6,
+    h4_count: 2,
+    h5_count: 0,
+    h6_count: 0,
+    internal_links_count: 25,
+    external_links_count: 12,
+    broken_links_count: 2,
+    has_login_form: true,
+    status: 'completed',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 4,
+    url: 'https://invalid-site.test',
+    title: '',
+    html_version: '',
+    h1_count: 0,
+    h2_count: 0,
+    h3_count: 0,
+    h4_count: 0,
+    h5_count: 0,
+    h6_count: 0,
+    internal_links_count: 0,
+    external_links_count: 0,
+    broken_links_count: 0,
+    has_login_form: false,
+    status: 'error',
+    error_message: 'Site não acessível',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+];
 
-      return {
-        data: mockURLs,
-        page: params?.page || 1,
-        limit: params?.limit || 10,
-        total: mockURLs.length,
-        total_pages: 1,
-      };
-    }
-  }
+const createMockURL = (id: number): URLAnalysis => ({
+  id,
+  url: 'https://example.com',
+  title: 'Example Domain',
+  html_version: 'HTML5',
+  h1_count: 1,
+  h2_count: 2,
+  h3_count: 3,
+  h4_count: 1,
+  h5_count: 0,
+  h6_count: 0,
+  internal_links_count: 15,
+  external_links_count: 8,
+  broken_links_count: 2,
+  has_login_form: false,
+  status: 'completed',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+});
 
-  static async getURL(id: number): Promise<URLAnalysis> {
-    try {
-      const response = await api.get(`/urls/${id}`);
-      return response.data;
-    } catch (error) {
-      return {
-        id,
-        url: 'https://example.com',
-        title: 'Example Domain',
-        html_version: 'HTML5',
-        h1_count: 1,
-        h2_count: 2,
-        h3_count: 3,
-        h4_count: 1,
-        h5_count: 0,
-        h6_count: 0,
-        internal_links_count: 15,
-        external_links_count: 8,
-        broken_links_count: 2,
-        has_login_form: false,
-        status: 'completed',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-    }
-  }
-
-  static async addURL(urlData: URLRequest): Promise<URLAnalysis> {
-    const response: AxiosResponse<{ data: URLAnalysis; message: string }> =
-      await api.post('/urls', urlData);
-
-    toast.success(i18n.t('messages.urlAdded'));
-    return response.data.data;
-  }
-
-  static async analyzeURL(id: number): Promise<void> {
-    await api.put(`/urls/${id}/analyze`);
-    toast.success(i18n.t('messages.analysisStarted'));
-  }
-
-  static async deleteURL(id: number): Promise<void> {
-    await api.delete(`/urls/${id}`);
-    toast.success(i18n.t('messages.urlDeleted'));
-  }
-
-  static async bulkAnalyze(ids: number[]): Promise<SuccessResponse> {
-    try {
-      const response = await api.post('/urls/bulk-analyze', { ids });
-      return response.data;
-    } catch (error) {
-      throw new Error(i18n.t('messages.errorBulkAnalyze'));
-    }
-  }
-
-  static async bulkDelete(ids: number[]): Promise<SuccessResponse> {
-    try {
-      const response = await api.post('/urls/bulk-delete', { ids });
-      return response.data;
-    } catch (error) {
-      throw new Error(i18n.t('messages.errorBulkDelete'));
-    }
-  }
-
-  static async getBrokenLinks(urlId: number): Promise<BrokenLink[]> {
-    return [];
-  }
-
-  static async healthCheck(): Promise<{ status: string }> {
-    const response = await axios.get(
-      `${API_BASE_URL.replace('/api', '')}/health`
-    );
+// API Functions
+export const getURLs = async (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+}): Promise<PaginatedResponse<URLAnalysis>> => {
+  console.log('urls');
+  try {
+    const response = await api.get('/urls', { params });
     return response.data;
+  } catch (error) {
+    const mockURLs = createMockURLs();
+
+    return {
+      data: mockURLs,
+      page: params?.page || 1,
+      limit: params?.limit || 10,
+      total: mockURLs.length,
+      total_pages: 1,
+    };
   }
-}
+};
+
+export const getURL = async (id: number): Promise<URLAnalysis> => {
+  console.log('url');
+  try {
+    const response = await api.get(`/urls/${id}`);
+    return response.data;
+  } catch (error) {
+    return createMockURL(id);
+  }
+};
+
+export const addURL = async (urlData: URLRequest): Promise<URLAnalysis> => {
+  const response = await api.post('/urls', urlData);
+
+  toast.success(i18n.t('messages.urlAdded'));
+  return response.data.data;
+};
+
+export const analyzeURL = async (id: number): Promise<void> => {
+  await api.put(`/urls/${id}/analyze`);
+  toast.success(i18n.t('messages.analysisStarted'));
+};
+
+export const deleteURL = async (id: number): Promise<void> => {
+  await api.delete(`/urls/${id}`);
+  toast.success(i18n.t('messages.urlDeleted'));
+};
+
+export const bulkAnalyze = async (ids: number[]): Promise<SuccessResponse> => {
+  try {
+    const response = await api.post('/urls/bulk-analyze', { ids });
+    return response.data;
+  } catch (error) {
+    throw new Error(i18n.t('messages.errorBulkAnalyze'));
+  }
+};
+
+export const bulkDelete = async (ids: number[]): Promise<SuccessResponse> => {
+  try {
+    const response = await api.post('/urls/bulk-delete', { ids });
+    return response.data;
+  } catch (error) {
+    throw new Error(i18n.t('messages.errorBulkDelete'));
+  }
+};
+
+export const getBrokenLinks = async (urlId: number): Promise<BrokenLink[]> => {
+  return [];
+};
+
+export const healthCheck = async (): Promise<{ status: string }> => {
+  const response = await axios.get(
+    `${API_BASE_URL.replace('/api', '')}/health`
+  );
+  return response.data;
+};
+
+// Default export for backward compatibility
+const APIService = {
+  getURLs,
+  getURL,
+  addURL,
+  analyzeURL,
+  deleteURL,
+  bulkAnalyze,
+  bulkDelete,
+  getBrokenLinks,
+  healthCheck,
+};
 
 export default APIService;

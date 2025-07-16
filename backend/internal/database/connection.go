@@ -75,7 +75,7 @@ type DatabaseStats struct {
 	MaxLifetimeClosed int64         `json:"max_lifetime_closed"`
 }
 
-func Database(cfg *DatabaseConfig, logger *slog.Logger) (*Database, error) {
+func NewDatabase(cfg *DatabaseConfig, logger *slog.Logger) (*Database, error) {
 	logger.Info("Connecting to database",
 		slog.String("host", cfg.Host),
 		slog.Int("port", cfg.Port),
