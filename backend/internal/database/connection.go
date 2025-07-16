@@ -10,11 +10,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// MYSQL_ROOT_PASSWORD: rootpass123
+// MYSQL_DATABASE: website_analyzer
+// MYSQL_USER: analyzer_user
+// MYSQL_PASSWORD: analyzer_pass
+
 type DatabaseConfig struct {
 	Host     string `envconfig:"DB_HOST" default:"localhost"`
 	Port     int    `envconfig:"DB_PORT" default:"3306"`
 	Username string `envconfig:"DB_USER" default:"analyzer_user"`
-	Password string `envconfig:"DB_PASSWORD" default:"analyzer_pass"`
+	Password string `envconfig:"DB_PASSWORD" default:"rootpass123"`
 	Database string `envconfig:"DB_NAME" default:"website_analyzer"`
 
 	MaxOpenConns    int           `envconfig:"DB_MAX_OPEN_CONNS" default:"25"`

@@ -1,4 +1,4 @@
-module seacher-app
+module searcher-app
 
 go 1.23.0
 

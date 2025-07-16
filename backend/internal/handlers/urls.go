@@ -7,18 +7,18 @@ import (
 	"strconv"
 	"time"
 
-	"seacher-app/internal/models"
-	"seacher-app/internal/services"
+	"searcher-app/internal/models"
+	"searcher-app/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 type URLHandler struct {
-	crawlerService *service.CrawlerService
+	crawlerService services.CrawlerService
 	wsHandler      *WebSocketHandler
 }
 
-func NewURLHandler(crawlerService *service.CrawlerService, wsHandler *WebSocketHandler) *URLHandler {
+func NewURLHandler(crawlerService services.CrawlerService, wsHandler *WebSocketHandler) *URLHandler {
 	return &URLHandler{
 		crawlerService: crawlerService,
 		wsHandler:      wsHandler,

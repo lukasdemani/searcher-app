@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"website-analyzer/internal/models"
-	"website-analyzer/internal/repository"
-	"website-analyzer/internal/worker"
+	"searcher-app/internal/models"
+	"searcher-app/internal/repository"
+	"searcher-app/internal/worker"
 
 	"golang.org/x/net/html"
 )

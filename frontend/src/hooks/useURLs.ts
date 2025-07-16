@@ -101,9 +101,9 @@ export const useURLs = (options: UseURLsOptions = {}) => {
         }
       );
 
-      setUrls(response.data);
-      setTotalCount(response.total);
-      setTotalPages(response.total_pages);
+      setUrls(response?.data);
+      setTotalCount(response?.total);
+      setTotalPages(response?.total_pages);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch URLs');
       console.error('Error fetching URLs:', err);

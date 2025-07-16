@@ -70,139 +70,27 @@ api.interceptors.response.use(
   }
 );
 
-// Mock data for fallback scenarios
-const createMockURLs = (): URLAnalysis[] => [
-  {
-    id: 1,
-    url: 'https://example.com',
-    title: 'Example Domain',
-    html_version: 'HTML5',
-    h1_count: 1,
-    h2_count: 2,
-    h3_count: 3,
-    h4_count: 0,
-    h5_count: 0,
-    h6_count: 0,
-    internal_links_count: 5,
-    external_links_count: 3,
-    broken_links_count: 0,
-    has_login_form: false,
-    status: 'completed',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    url: 'https://google.com',
-    title: 'Google',
-    html_version: 'HTML5',
-    h1_count: 1,
-    h2_count: 0,
-    h3_count: 1,
-    h4_count: 0,
-    h5_count: 0,
-    h6_count: 0,
-    internal_links_count: 15,
-    external_links_count: 8,
-    broken_links_count: 0,
-    has_login_form: false,
-    status: 'processing',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 3,
-    url: 'https://github.com',
-    title: 'GitHub',
-    html_version: 'HTML5',
-    h1_count: 2,
-    h2_count: 4,
-    h3_count: 6,
-    h4_count: 2,
-    h5_count: 0,
-    h6_count: 0,
-    internal_links_count: 25,
-    external_links_count: 12,
-    broken_links_count: 2,
-    has_login_form: true,
-    status: 'completed',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 4,
-    url: 'https://invalid-site.test',
-    title: '',
-    html_version: '',
-    h1_count: 0,
-    h2_count: 0,
-    h3_count: 0,
-    h4_count: 0,
-    h5_count: 0,
-    h6_count: 0,
-    internal_links_count: 0,
-    external_links_count: 0,
-    broken_links_count: 0,
-    has_login_form: false,
-    status: 'error',
-    error_message: 'Site não acessível',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
-
-const createMockURL = (id: number): URLAnalysis => ({
-  id,
-  url: 'https://example.com',
-  title: 'Example Domain',
-  html_version: 'HTML5',
-  h1_count: 1,
-  h2_count: 2,
-  h3_count: 3,
-  h4_count: 1,
-  h5_count: 0,
-  h6_count: 0,
-  internal_links_count: 15,
-  external_links_count: 8,
-  broken_links_count: 2,
-  has_login_form: false,
-  status: 'completed',
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-});
-
 // API Functions
 export const getURLs = async (params?: {
   page?: number;
   limit?: number;
   search?: string;
   status?: string;
-}): Promise<PaginatedResponse<URLAnalysis>> => {
+}) => {
   console.log('urls');
   try {
     const response = await api.get('/urls', { params });
+    console.log(response);
     return response.data;
-  } catch (error) {
-    const mockURLs = createMockURLs();
-
-    return {
-      data: mockURLs,
-      page: params?.page || 1,
-      limit: params?.limit || 10,
-      total: mockURLs.length,
-      total_pages: 1,
-    };
-  }
+  } catch (error) {}
 };
 
-export const getURL = async (id: number): Promise<URLAnalysis> => {
+export const getURL = async (id: number) => {
   console.log('url');
   try {
     const response = await api.get(`/urls/${id}`);
     return response.data;
-  } catch (error) {
-    return createMockURL(id);
-  }
+  } catch (error) {}
 };
 
 export const addURL = async (urlData: URLRequest): Promise<URLAnalysis> => {
