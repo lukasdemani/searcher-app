@@ -1,6 +1,4 @@
--- Initial schema for website analyzer
 
--- URLs table
 CREATE TABLE IF NOT EXISTS urls (
     id INT PRIMARY KEY AUTO_INCREMENT,
     url VARCHAR(2048) NOT NULL,
@@ -27,7 +25,6 @@ CREATE TABLE IF NOT EXISTS urls (
     INDEX idx_url_hash (url_hash)
 );
 
--- Broken links table
 CREATE TABLE IF NOT EXISTS broken_links (
     id INT PRIMARY KEY AUTO_INCREMENT,
     url_id INT NOT NULL,
