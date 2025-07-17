@@ -17,13 +17,31 @@ type URLRepository interface {
 	Update(ctx context.Context, url *models.URL) error
 	Delete(ctx context.Context, id int) error
 	DeleteBatch(ctx context.Context, ids []int) error
+
+	SaveBrokenLink(ctx context.Context, brokenLink *models.BrokenLink) error
+	FindBrokenLinksByURLID(ctx context.Context, urlID int) ([]models.BrokenLink, error)
+	DeleteBrokenLinksByURLID(ctx context.Context, urlID int) error
 }
 
 type URLFilter struct {
-	Search string
-	Status models.URLStatus
-	Page   int
-	Limit  int
+	Search               string
+	Status               models.URLStatus
+	Page                 int
+	Limit                int
+	Title                string
+	HTMLVersion          string
+	InternalLinksCount   *int
+	ExternalLinksCount   *int
+	BrokenLinksCount     *int
+	HasLoginForm         *bool
+	MinInternalLinks     *int
+	MaxInternalLinks     *int
+	MinExternalLinks     *int
+	MaxExternalLinks     *int
+	MinBrokenLinks       *int
+	MaxBrokenLinks       *int
+	SortBy               string
+	SortDirection        string
 }
 
 type MySQLURLRepository struct {
@@ -147,13 +165,68 @@ func (r *MySQLURLRepository) FindAll(ctx context.Context, filter URLFilter) ([]m
 	args := []interface{}{}
 
 	if filter.Search != "" {
-		whereClause += " AND url LIKE ?"
-		args = append(args, "%"+filter.Search+"%")
+		whereClause += " AND (url LIKE ? OR title LIKE ? OR html_version LIKE ?)"
+		searchPattern := "%" + filter.Search + "%"
+		args = append(args, searchPattern, searchPattern, searchPattern)
 	}
 
 	if filter.Status != "" {
 		whereClause += " AND status = ?"
 		args = append(args, filter.Status)
+	}
+
+	if filter.Title != "" {
+		whereClause += " AND title LIKE ?"
+		args = append(args, "%"+filter.Title+"%")
+	}
+
+	if filter.HTMLVersion != "" {
+		whereClause += " AND html_version LIKE ?"
+		args = append(args, "%"+filter.HTMLVersion+"%")
+	}
+
+	if filter.InternalLinksCount != nil {
+		whereClause += " AND internal_links_count = ?"
+		args = append(args, *filter.InternalLinksCount)
+	}
+	if filter.MinInternalLinks != nil {
+		whereClause += " AND internal_links_count >= ?"
+		args = append(args, *filter.MinInternalLinks)
+	}
+	if filter.MaxInternalLinks != nil {
+		whereClause += " AND internal_links_count <= ?"
+		args = append(args, *filter.MaxInternalLinks)
+	}
+
+	if filter.ExternalLinksCount != nil {
+		whereClause += " AND external_links_count = ?"
+		args = append(args, *filter.ExternalLinksCount)
+	}
+	if filter.MinExternalLinks != nil {
+		whereClause += " AND external_links_count >= ?"
+		args = append(args, *filter.MinExternalLinks)
+	}
+	if filter.MaxExternalLinks != nil {
+		whereClause += " AND external_links_count <= ?"
+		args = append(args, *filter.MaxExternalLinks)
+	}
+
+	if filter.BrokenLinksCount != nil {
+		whereClause += " AND broken_links_count = ?"
+		args = append(args, *filter.BrokenLinksCount)
+	}
+	if filter.MinBrokenLinks != nil {
+		whereClause += " AND broken_links_count >= ?"
+		args = append(args, *filter.MinBrokenLinks)
+	}
+	if filter.MaxBrokenLinks != nil {
+		whereClause += " AND broken_links_count <= ?"
+		args = append(args, *filter.MaxBrokenLinks)
+	}
+
+	if filter.HasLoginForm != nil {
+		whereClause += " AND has_login_form = ?"
+		args = append(args, *filter.HasLoginForm)
 	}
 
 	countQuery := "SELECT COUNT(*) FROM urls " + whereClause
@@ -167,13 +240,36 @@ func (r *MySQLURLRepository) FindAll(ctx context.Context, filter URLFilter) ([]m
 		return nil, 0, fmt.Errorf("failed to count URLs: %w", err)
 	}
 
+	orderClause := "ORDER BY created_at DESC"
+	if filter.SortBy != "" {
+		validSortFields := map[string]bool{
+			"title":                true,
+			"url":                  true,
+			"html_version":         true,
+			"internal_links_count": true,
+			"external_links_count": true,
+			"broken_links_count":   true,
+			"has_login_form":       true,
+			"status":               true,
+			"created_at":           true,
+			"updated_at":           true,
+		}
+		
+		if validSortFields[filter.SortBy] {
+			direction := "ASC"
+			if filter.SortDirection == "desc" {
+				direction = "DESC"
+			}
+			orderClause = fmt.Sprintf("ORDER BY %s %s", filter.SortBy, direction)
+		}
+	}
+
 	offset := (filter.Page - 1) * filter.Limit
 	query := `
 		SELECT id, url, url_hash, title, html_version, h1_count, h2_count, h3_count, h4_count, h5_count, h6_count,
 		       internal_links_count, external_links_count, broken_links_count, has_login_form, status,
 		       error_message, created_at, updated_at
-		FROM urls ` + whereClause + `
-		ORDER BY created_at DESC
+		FROM urls ` + whereClause + ` ` + orderClause + `
 		LIMIT ? OFFSET ?`
 
 	args = append(args, filter.Limit, offset)
@@ -308,6 +404,88 @@ func (r *MySQLURLRepository) DeleteBatch(ctx context.Context, ids []int) error {
 
 	if affected == 0 {
 		return fmt.Errorf("no URLs found with provided IDs")
+	}
+
+	return nil
+}
+
+
+func (r *MySQLURLRepository) SaveBrokenLink(ctx context.Context, brokenLink *models.BrokenLink) error {
+	query := `
+		INSERT INTO broken_links (url_id, link_url, status_code, error_message)
+		VALUES (?, ?, ?, ?)`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	result, err := r.db.ExecContext(ctx, query,
+		brokenLink.URLID, brokenLink.LinkURL, brokenLink.StatusCode, brokenLink.ErrorMessage)
+
+	if err != nil {
+		return fmt.Errorf("failed to save broken link: %w", err)
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return fmt.Errorf("failed to get last insert ID: %w", err)
+	}
+
+	brokenLink.ID = int(id)
+	return nil
+}
+
+func (r *MySQLURLRepository) FindBrokenLinksByURLID(ctx context.Context, urlID int) ([]models.BrokenLink, error) {
+	query := `
+		SELECT id, url_id, link_url, status_code, error_message
+		FROM broken_links
+		WHERE url_id = ?
+		ORDER BY id`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	rows, err := r.db.QueryContext(ctx, query, urlID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query broken links: %w", err)
+	}
+	defer rows.Close()
+
+	var brokenLinks []models.BrokenLink
+	for rows.Next() {
+		var brokenLink models.BrokenLink
+		var errorMessage sql.NullString
+
+		err := rows.Scan(
+			&brokenLink.ID, &brokenLink.URLID, &brokenLink.LinkURL,
+			&brokenLink.StatusCode, &errorMessage,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan broken link: %w", err)
+		}
+
+		if errorMessage.Valid {
+			brokenLink.ErrorMessage = &errorMessage.String
+		}
+
+		brokenLinks = append(brokenLinks, brokenLink)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %w", err)
+	}
+
+	return brokenLinks, nil
+}
+
+func (r *MySQLURLRepository) DeleteBrokenLinksByURLID(ctx context.Context, urlID int) error {
+	query := "DELETE FROM broken_links WHERE url_id = ?"
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	_, err := r.db.ExecContext(ctx, query, urlID)
+	if err != nil {
+		return fmt.Errorf("failed to delete broken links: %w", err)
 	}
 
 	return nil
