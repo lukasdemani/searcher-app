@@ -42,7 +42,7 @@ export interface URLRequest {
 
 export interface SuccessResponse {
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface PaginatedResponse<T> {
@@ -70,27 +70,19 @@ api.interceptors.response.use(
   }
 );
 
-// API Functions
 export const getURLs = async (params?: {
   page?: number;
   limit?: number;
   search?: string;
   status?: string;
 }) => {
-  console.log('urls');
-  try {
     const response = await api.get('/urls', { params });
-    console.log(response);
     return response.data;
-  } catch (error) {}
 };
 
 export const getURL = async (id: number) => {
-  console.log('url');
-  try {
-    const response = await api.get(`/urls/${id}`);
-    return response.data;
-  } catch (error) {}
+  const response = await api.get(`/urls/${id}`);
+  return response.data;
 };
 
 export const addURL = async (urlData: URLRequest): Promise<URLAnalysis> => {
@@ -114,7 +106,7 @@ export const bulkAnalyze = async (ids: number[]): Promise<SuccessResponse> => {
   try {
     const response = await api.post('/urls/bulk-analyze', { ids });
     return response.data;
-  } catch (error) {
+  } catch {
     throw new Error(i18n.t('messages.errorBulkAnalyze'));
   }
 };
@@ -123,12 +115,12 @@ export const bulkDelete = async (ids: number[]): Promise<SuccessResponse> => {
   try {
     const response = await api.post('/urls/bulk-delete', { ids });
     return response.data;
-  } catch (error) {
+  } catch {
     throw new Error(i18n.t('messages.errorBulkDelete'));
   }
 };
 
-export const getBrokenLinks = async (urlId: number): Promise<BrokenLink[]> => {
+export const getBrokenLinks = async (): Promise<BrokenLink[]> => {
   return [];
 };
 
@@ -139,7 +131,6 @@ export const healthCheck = async (): Promise<{ status: string }> => {
   return response.data;
 };
 
-// Default export for backward compatibility
 const APIService = {
   getURLs,
   getURL,
