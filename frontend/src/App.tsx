@@ -9,7 +9,6 @@ import {
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { Layout } from './components/layout/Layout';
-import OfflineIndicator from './components/ui/ OfflineIndicator';
 
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const URLDetailsPage = React.lazy(() => import('./pages/URLDetailsPage'));
@@ -34,9 +33,6 @@ const LazyLoadErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
 function App() {
   console.log('app');
   return (
-    // <ErrorBoundary>
-      //<OfflineIndicator />
-
       <Router>
         <div className='App'>
           <Toaster position='top-right' />
@@ -70,7 +66,6 @@ function App() {
           </Routes>
         </div>
       </Router>
-    //</ErrorBoundary>
   );
 }
 

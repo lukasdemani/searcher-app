@@ -10,11 +10,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// MYSQL_ROOT_PASSWORD: rootpass123
-// MYSQL_DATABASE: website_analyzer
-// MYSQL_USER: analyzer_user
-// MYSQL_PASSWORD: analyzer_pass
-
 type DatabaseConfig struct {
 	Host     string `envconfig:"DB_HOST" default:"localhost"`
 	Port     int    `envconfig:"DB_PORT" default:"3306"`
@@ -42,7 +37,7 @@ type DatabaseConfig struct {
 }
 
 func (cfg *DatabaseConfig) DSN() string {
-	params := fmt.Sprintf("charset=%s&parseTime=%t&loc=%s&timeout=%s&readTimeout=%s&writeTimeout=%s",
+	params := fmt.Sprintf("charset=%s&parseTime=%t&loc=%s&timeout=%s&readTimeout=%s&writeTimeout=%s&allowNativePasswords=true&allowCleartextPasswords=true",
 		cfg.Charset, cfg.ParseTime, cfg.Location,
 		cfg.ConnectTimeout, cfg.ReadTimeout, cfg.WriteTimeout)
 
@@ -84,9 +79,13 @@ func NewDatabase(cfg *DatabaseConfig, logger *slog.Logger) (*Database, error) {
 	logger.Info("Connecting to database",
 		slog.String("host", cfg.Host),
 		slog.Int("port", cfg.Port),
-		slog.String("database", cfg.Database))
+		slog.String("database", cfg.Database),
+		slog.Duration("connect_timeout", cfg.ConnectTimeout))
 
-	db, err := sql.Open("mysql", cfg.DSN())
+	dsn := cfg.DSN()
+	logger.Info("DSN generated", slog.String("dsn", dsn))
+
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
@@ -96,9 +95,15 @@ func NewDatabase(cfg *DatabaseConfig, logger *slog.Logger) (*Database, error) {
 	db.SetConnMaxLifetime(cfg.ConnMaxLifetime)
 	db.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
 
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.ConnectTimeout)
+	pingTimeout := cfg.ConnectTimeout * 2
+	if pingTimeout < 30*time.Second {
+		pingTimeout = 30 * time.Second
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), pingTimeout)
 	defer cancel()
 
+	logger.Info("Pinging database", slog.Duration("timeout", pingTimeout))
 	if err := db.PingContext(ctx); err != nil {
 		db.Close()
 		return nil, fmt.Errorf("failed to ping database: %w", err)

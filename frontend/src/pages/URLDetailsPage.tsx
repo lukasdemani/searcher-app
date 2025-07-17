@@ -18,7 +18,7 @@ import { ChevronLeftIcon, NoResultsIcon } from '../components/icons';
 import Button from '../components/ui/Button';
 import StatusBadge from '../components/ui/StatusBadge';
 import APIService from '../services/api';
-import { BrokenLink, URLAnalysis } from '../types/types';
+import type { BrokenLink, URLAnalysis } from '../types/types';
 
 const URLDetailsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -40,11 +40,11 @@ const URLDetailsPage: React.FC = () => {
       setLoading(true);
       const [urlData, brokenLinksData] = await Promise.all([
         APIService.getURL(Number(urlId)),
-        APIService.getBrokenLinks(Number(urlId)),
+        APIService.getBrokenLinks(),
       ]);
       setUrl(urlData);
       setBrokenLinks(brokenLinksData);
-    } catch (error) {
+    } catch {
       toast.error(t('messages.errorLoadingDetails'));
       navigate('/dashboard');
     } finally {
@@ -60,7 +60,7 @@ const URLDetailsPage: React.FC = () => {
       await APIService.analyzeURL(url.id);
       toast.success(t('messages.reanalysisStarted'));
       setTimeout(() => fetchURLDetails(String(url.id)), 2000);
-    } catch (error) {
+    } catch {
       toast.error(t('messages.errorStartingReanalysis'));
     } finally {
       setReanalyzing(false);
