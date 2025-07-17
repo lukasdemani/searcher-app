@@ -19,7 +19,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    lng: 'en', // default language
+    lng: 'en',
     debug: process.env.NODE_ENV === 'development',
     interpolation: {
       escapeValue: false,
@@ -30,6 +30,17 @@ i18n
       lookupLocalStorage: 'i18nextLng',
       caches: ['localStorage'],
     },
+
+    supportedLngs: ['en', 'de'],
+    nonExplicitSupportedLngs: true,
+    cleanCode: true,
+    
+    load: 'languageOnly',
   });
+
+if (i18n.language && !['en', 'de'].includes(i18n.language.split('-')[0])) {
+  i18n.changeLanguage('en');
+  localStorage.removeItem('i18nextLng');
+}
 
 export default i18n;
