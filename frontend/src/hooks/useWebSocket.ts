@@ -33,7 +33,6 @@ export const useWebSocket = ({
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log('WebSocket connected');
         setIsConnected(true);
         setError(null);
         setReconnectAttempts(0);
@@ -43,7 +42,6 @@ export const useWebSocket = ({
       ws.onmessage = (event) => {
         try {
           const update: StatusUpdate = JSON.parse(event.data);
-          console.log('WebSocket message received:', update);
 
           if (onStatusUpdate && update.type === 'status_update') {
             onStatusUpdate(update);
@@ -54,7 +52,6 @@ export const useWebSocket = ({
       };
 
       ws.onclose = (event) => {
-        console.log('WebSocket disconnected:', event.code, event.reason);
         setIsConnected(false);
         wsRef.current = null;
 
@@ -64,10 +61,6 @@ export const useWebSocket = ({
         ) {
           reconnectAttemptsRef.current++;
           setReconnectAttempts(reconnectAttemptsRef.current);
-
-          console.log(
-            `Reconnecting... (${reconnectAttemptsRef.current}/${maxReconnectAttempts})`
-          );
 
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
