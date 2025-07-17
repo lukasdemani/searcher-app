@@ -88,7 +88,7 @@ export DB_PORT=3306
 export DB_USER=analyzer_user
 export DB_PASSWORD=analyzer_pass
 export DB_NAME=website_analyzer
-export API_KEY=dev-api-key-2024
+export API_KEY=dev-api-key-2025
 
 # Run migrations (if available)
 # mysql -u analyzer_user -p analyzer_pass website_analyzer < migrations/001_initial_schema.sql
@@ -113,7 +113,7 @@ npm run dev
 ### Authentication
 All API endpoints require an API key in the `X-API-Key` header:
 ```
-X-API-Key: dev-api-key-2024
+X-API-Key: dev-api-key-2025
 ```
 
 ### Endpoints
@@ -139,14 +139,14 @@ X-API-Key: dev-api-key-2024
 ```bash
 curl -X POST http://localhost:8080/api/urls \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: dev-api-key-2024" \
+  -H "X-API-Key: dev-api-key-2025" \
   -d '{"url": "https://example.com"}'
 ```
 
 #### Get URLs
 ```bash
 curl http://localhost:8080/api/urls?page=1&limit=10 \
-  -H "X-API-Key: dev-api-key-2024"
+  -H "X-API-Key: dev-api-key-2025"
 ```
 
 ## Data Collection
