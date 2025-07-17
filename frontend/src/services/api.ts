@@ -5,7 +5,7 @@ import i18n from '../i18n';
 const API_BASE_URL = 'http://localhost:8080/api';
 console.log(API_BASE_URL);
 
-const API_KEY = 'dev-api-key-2025';
+const API_KEY = 'dev-api-key-2024';
 
 export interface BrokenLink {
   id: number;
