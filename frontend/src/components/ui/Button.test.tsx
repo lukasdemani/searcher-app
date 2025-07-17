@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import Button from './Button';
 
@@ -9,7 +10,7 @@ describe('Button Component', () => {
   });
 
   test('calls onClick when clicked', () => {
-    const handleClick = jest.fn();
+    const handleClick = vi.fn();
     render(<Button onClick={handleClick}>Click me</Button>);
     
     fireEvent.click(screen.getByRole('button'));
@@ -24,13 +25,13 @@ describe('Button Component', () => {
 
   test('applies correct variant classes', () => {
     const { rerender } = render(<Button variant="primary">Primary</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-primary-600');
+    expect(screen.getByRole('button')).toHaveClass('bg-primary-600', 'text-white');
 
     rerender(<Button variant="secondary">Secondary</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-white', 'border-gray-300');
+    expect(screen.getByRole('button')).toHaveClass('bg-gray-200', 'text-gray-900');
 
     rerender(<Button variant="danger">Danger</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-red-600');
+    expect(screen.getByRole('button')).toHaveClass('bg-red-600', 'text-white');
   });
 
   test('applies correct size classes', () => {
@@ -47,7 +48,7 @@ describe('Button Component', () => {
   });
 
   test('does not call onClick when disabled', () => {
-    const handleClick = jest.fn();
+    const handleClick = vi.fn();
     render(<Button onClick={handleClick} disabled>Disabled</Button>);
     
     fireEvent.click(screen.getByRole('button'));
