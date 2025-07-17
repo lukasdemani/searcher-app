@@ -101,7 +101,7 @@ const DashboardPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-API-Key': 'dev-api-key-2024',
+          'X-API-Key': 'dev-api-key-2025',
         },
         body: JSON.stringify({ ids }),
       });
@@ -123,7 +123,7 @@ const DashboardPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-API-Key': 'dev-api-key-2024',
+          'X-API-Key': 'dev-api-key-2025',
         },
         body: JSON.stringify({ ids }),
       });
