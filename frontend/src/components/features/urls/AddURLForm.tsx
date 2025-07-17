@@ -71,7 +71,7 @@ const AddURLForm: React.FC<AddURLFormProps> = ({ onAddURL }) => {
     return normalizedUrl;
   };
 
-  const validateURL = (input: string): boolean => {
+  const validateURL = useCallback((input: string): boolean => {
     if (!input.trim()) return false;
 
     try {
@@ -87,7 +87,7 @@ const AddURLForm: React.FC<AddURLFormProps> = ({ onAddURL }) => {
     } catch {
       return false;
     }
-  };
+  }, []);
 
   const performValidation = useCallback(
     (input: string) => {
@@ -109,7 +109,7 @@ const AddURLForm: React.FC<AddURLFormProps> = ({ onAddURL }) => {
         }
       }, 300);
     },
-    [t]
+    [t, validateURL]
   );
 
   useEffect(() => {
@@ -193,7 +193,7 @@ const AddURLForm: React.FC<AddURLFormProps> = ({ onAddURL }) => {
 
   return (
     <>
-      <Button onClick={() => setIsModalOpen(true)} className='shrink-0'>
+      <Button onClick={() => setIsModalOpen(true)} className='shrink-0 w-full sm:w-auto'>
         <PlusIcon className='h-4 w-4 mr-2' />
         {t('dashboard.addUrl')}
       </Button>
