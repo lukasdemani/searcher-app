@@ -5,7 +5,6 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 import React from 'react';
-//import { URLStatus } from '../../types';
 export type URLStatus = 'queued' | 'processing' | 'completed' | 'error';
 
 interface StatusBadgeProps {
