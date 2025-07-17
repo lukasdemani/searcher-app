@@ -60,7 +60,6 @@ export const useURLs = (options: UseURLsOptions = {}) => {
   } = options;
 
   const handleStatusUpdate = useCallback((update: any) => {
-    console.log('Status update received:', update);
 
     setUrls((currentUrls) => {
       const updatedUrls = [...currentUrls];
