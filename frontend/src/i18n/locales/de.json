@@ -16,7 +16,8 @@
     "previous": "Vorherige",
     "next": "Nächste",
     "back": "Zurück",
-    "actions": "Aktionen"
+    "actions": "Aktionen",
+    "view": "Ansehen"
   },
   "header": {
     "title": "Website Analyzer",
@@ -42,7 +43,15 @@
       "processing": "Verarbeitung",
       "completed": "Abgeschlossen",
       "error": "Fehler",
-      "itemsPerPage": "pro Seite"
+      "itemsPerPage": "pro Seite",
+      "filterBy": "Filtern nach {{field}}",
+      "all": "Alle",
+      "noFilter": "Kein Filter",
+      "clearAll": "Alle löschen",
+      "clearFilter": "Filter löschen",
+      "globalSearch": "Globale Suche",
+      "status": "Status",
+      "queued": "Warteschlange"
     },
     "table": {
       "urls": "URLs",
@@ -116,7 +125,12 @@
       "headingsDistribution": "Überschriften-Verteilung",
       "internalLinks": "Interne Links",
       "externalLinks": "Externe Links",
-      "brokenLinks": "Defekte Links"
+      "brokenLinks": "Defekte Links",
+      "count": "Anzahl",
+      "linkCount": "Link-Anzahl",
+      "chartType": "Diagrammtyp",
+      "barChart": "Balkendiagramm",
+      "donutChart": "Donut-Diagramm"
     },
     "brokenLinks": {
       "title": "Defekte Links ({{count}})",
@@ -169,7 +183,14 @@
     "errorBulkAnalyze": "Fehler beim Analysieren der ausgewählten URLs",
     "errorBulkDelete": "Fehler beim Löschen der ausgewählten URLs",
     "errorExporting": "Fehler beim Exportieren der Daten",
-    "errorImporting": "Fehler beim Importieren der URLs"
+    "errorImporting": "Fehler beim Importieren der URLs",
+    "bulkAnalyzeStarted": "Massenanalyse gestartet!",
+    "bulkDeleteSuccess": "URLs erfolgreich gelöscht!",
+    "exportSuccess": "Daten erfolgreich exportiert!",
+    "importSuccess": "{{count}} URLs erfolgreich importiert!",
+    "importError": "Fehler beim Importieren - URL-Spalte nicht gefunden",
+    "noUrlsFound": "Keine URLs in der Datei gefunden",
+    "invalidFileType": "Ungültiger Dateityp - nur CSV-Dateien sind erlaubt"
   },
   "errorBoundary": {
     "title": "Ups! Etwas ist schief gelaufen",
