@@ -31,7 +31,6 @@ const LazyLoadErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
 );
 
 function App() {
-  console.log('app');
   return (
       <Router>
         <div className='App'>
