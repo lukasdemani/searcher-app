@@ -26,7 +26,6 @@ func NewURLHandler(crawlerService services.CrawlerService, wsHandler *WebSocketH
 }
 
 func (h *URLHandler) GetURLs(c *gin.Context) {
-	// Create context with timeout for database operations
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
 	defer cancel()
 
@@ -41,7 +40,6 @@ func (h *URLHandler) GetURLs(c *gin.Context) {
 		limit = 10
 	}
 
-	// Check if context is already cancelled
 	select {
 	case <-ctx.Done():
 		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
@@ -69,7 +67,6 @@ func (h *URLHandler) GetURLs(c *gin.Context) {
 }
 
 func (h *URLHandler) CreateURL(c *gin.Context) {
-	// Create context with timeout for URL creation
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 15*time.Second)
 	defer cancel()
 
@@ -79,7 +76,6 @@ func (h *URLHandler) CreateURL(c *gin.Context) {
 		return
 	}
 
-	// Check if context is already cancelled
 	select {
 	case <-ctx.Done():
 		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
@@ -93,33 +89,26 @@ func (h *URLHandler) CreateURL(c *gin.Context) {
 		return
 	}
 
-	// Start analysis in background with context and broadcast status updates
 	go func() {
-		// Create background context for analysis (not cancelled by request)
 		bgCtx, bgCancel := context.WithTimeout(context.Background(), 5*time.Minute)
 		defer bgCancel()
 
-		// Broadcast processing status
 		h.wsHandler.BroadcastStatusUpdate(url.ID, "processing", nil)
 
-		// Perform analysis
 		err := h.crawlerService.AnalyzeURL(url.ID)
 
-		// Get updated URL data
 		updatedURL, getErr := h.crawlerService.GetURL(url.ID)
 		if getErr != nil {
 			h.wsHandler.BroadcastStatusUpdate(url.ID, "error", map[string]string{"error": getErr.Error()})
 			return
 		}
 
-		// Broadcast final status
 		if err != nil {
 			h.wsHandler.BroadcastStatusUpdate(url.ID, "error", updatedURL)
 		} else {
 			h.wsHandler.BroadcastStatusUpdate(url.ID, "completed", updatedURL)
 		}
 
-		// Check if background context was cancelled
 		select {
 		case <-bgCtx.Done():
 			h.wsHandler.BroadcastStatusUpdate(url.ID, "timeout", map[string]string{"error": "Analysis timeout"})
@@ -134,7 +123,6 @@ func (h *URLHandler) CreateURL(c *gin.Context) {
 }
 
 func (h *URLHandler) GetURL(c *gin.Context) {
-	// Create context with timeout
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -144,7 +132,6 @@ func (h *URLHandler) GetURL(c *gin.Context) {
 		return
 	}
 
-	// Check if context is already cancelled
 	select {
 	case <-ctx.Done():
 		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
@@ -162,7 +149,6 @@ func (h *URLHandler) GetURL(c *gin.Context) {
 }
 
 func (h *URLHandler) AnalyzeURL(c *gin.Context) {
-	// Create context with timeout
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -172,7 +158,6 @@ func (h *URLHandler) AnalyzeURL(c *gin.Context) {
 		return
 	}
 
-	// Check if context is already cancelled
 	select {
 	case <-ctx.Done():
 		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
@@ -180,33 +165,26 @@ func (h *URLHandler) AnalyzeURL(c *gin.Context) {
 	default:
 	}
 
-	// Start analysis in background with WebSocket updates
 	go func() {
-		// Create background context for analysis (not cancelled by request)
 		bgCtx, bgCancel := context.WithTimeout(context.Background(), 5*time.Minute)
 		defer bgCancel()
 
-		// Broadcast processing status
 		h.wsHandler.BroadcastStatusUpdate(id, "processing", nil)
 
-		// Perform analysis
 		err := h.crawlerService.AnalyzeURL(id)
 
-		// Get updated URL data
 		updatedURL, getErr := h.crawlerService.GetURL(id)
 		if getErr != nil {
 			h.wsHandler.BroadcastStatusUpdate(id, "error", map[string]string{"error": getErr.Error()})
 			return
 		}
 
-		// Broadcast final status
 		if err != nil {
 			h.wsHandler.BroadcastStatusUpdate(id, "error", updatedURL)
 		} else {
 			h.wsHandler.BroadcastStatusUpdate(id, "completed", updatedURL)
 		}
 
-		// Check if background context was cancelled
 		select {
 		case <-bgCtx.Done():
 			h.wsHandler.BroadcastStatusUpdate(id, "timeout", map[string]string{"error": "Analysis timeout"})
@@ -218,7 +196,6 @@ func (h *URLHandler) AnalyzeURL(c *gin.Context) {
 }
 
 func (h *URLHandler) DeleteURL(c *gin.Context) {
-	// Create context with timeout
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -228,7 +205,6 @@ func (h *URLHandler) DeleteURL(c *gin.Context) {
 		return
 	}
 
-	// Check if context is already cancelled
 	select {
 	case <-ctx.Done():
 		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
@@ -242,14 +218,12 @@ func (h *URLHandler) DeleteURL(c *gin.Context) {
 		return
 	}
 
-	// Broadcast deletion
 	h.wsHandler.BroadcastStatusUpdate(id, "deleted", nil)
 
 	c.JSON(http.StatusOK, models.SuccessResponse{Message: "URL deleted successfully"})
 }
 
 func (h *URLHandler) BulkAnalyze(c *gin.Context) {
-	// Create context with timeout
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
 	defer cancel()
 
@@ -259,7 +233,6 @@ func (h *URLHandler) BulkAnalyze(c *gin.Context) {
 		return
 	}
 
-	// Check if context is already cancelled
 	select {
 	case <-ctx.Done():
 		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
@@ -269,31 +242,25 @@ func (h *URLHandler) BulkAnalyze(c *gin.Context) {
 
 	for _, id := range req.IDs {
 		go func(urlID int) {
-			// Create background context for analysis (not cancelled by request)
 			bgCtx, bgCancel := context.WithTimeout(context.Background(), 5*time.Minute)
 			defer bgCancel()
 
-			// Broadcast processing status
 			h.wsHandler.BroadcastStatusUpdate(urlID, "processing", nil)
 
-			// Perform analysis
 			err := h.crawlerService.AnalyzeURL(urlID)
 
-			// Get updated URL data
 			updatedURL, getErr := h.crawlerService.GetURL(urlID)
 			if getErr != nil {
 				h.wsHandler.BroadcastStatusUpdate(urlID, "error", map[string]string{"error": getErr.Error()})
 				return
 			}
 
-			// Broadcast final status
 			if err != nil {
 				h.wsHandler.BroadcastStatusUpdate(urlID, "error", updatedURL)
 			} else {
 				h.wsHandler.BroadcastStatusUpdate(urlID, "completed", updatedURL)
 			}
 
-			// Check if background context was cancelled
 			select {
 			case <-bgCtx.Done():
 				h.wsHandler.BroadcastStatusUpdate(urlID, "timeout", map[string]string{"error": "Analysis timeout"})
@@ -309,7 +276,6 @@ func (h *URLHandler) BulkAnalyze(c *gin.Context) {
 }
 
 func (h *URLHandler) BulkDelete(c *gin.Context) {
-	// Create context with timeout
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
 	defer cancel()
 
@@ -319,7 +285,6 @@ func (h *URLHandler) BulkDelete(c *gin.Context) {
 		return
 	}
 
-	// Check if context is already cancelled
 	select {
 	case <-ctx.Done():
 		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
@@ -329,7 +294,6 @@ func (h *URLHandler) BulkDelete(c *gin.Context) {
 
 	deleted := 0
 	for _, id := range req.IDs {
-		// Check context before each deletion
 		select {
 		case <-ctx.Done():
 			c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout during bulk deletion"})
@@ -339,7 +303,6 @@ func (h *URLHandler) BulkDelete(c *gin.Context) {
 
 		if err := h.crawlerService.DeleteURL(id); err == nil {
 			deleted++
-			// Broadcast deletion
 			h.wsHandler.BroadcastStatusUpdate(id, "deleted", nil)
 		}
 	}
@@ -351,17 +314,15 @@ func (h *URLHandler) BulkDelete(c *gin.Context) {
 }
 
 func (h *URLHandler) GetBrokenLinks(c *gin.Context) {
-	// Create context with timeout
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	_, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: "Invalid URL ID"})
 		return
 	}
 
-	// Check if context is already cancelled
 	select {
 	case <-ctx.Done():
 		c.JSON(http.StatusRequestTimeout, models.ErrorResponse{Error: "Request timeout"})
@@ -369,5 +330,11 @@ func (h *URLHandler) GetBrokenLinks(c *gin.Context) {
 	default:
 	}
 
-	c.JSON(http.StatusOK, []interface{}{})
+	brokenLinks, err := h.crawlerService.GetBrokenLinks(ctx, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, brokenLinks)
 }
