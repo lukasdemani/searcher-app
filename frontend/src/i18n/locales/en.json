@@ -59,6 +59,7 @@
       "title": "Title",
       "noTitle": "No title",
       "htmlVersion": "HTML Version",
+      "html_version": "HTML Version",
       "links": "Links",
       "internal": "Internal",
       "external": "External",
