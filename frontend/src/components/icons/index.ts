@@ -1,4 +1,3 @@
-// Common icons
 export { default as CheckCircleIcon } from './CheckCircleIcon';
 export { default as ArrowPathIcon } from './ArrowPathIcon';
 export { default as ClockIcon } from './ClockIcon';
@@ -14,7 +13,6 @@ export { default as PlayIcon } from './PlayIcon';
 export { default as DownloadIcon } from './DownloadIcon';
 export { default as UploadIcon } from './UploadIcon';
 
-// Dashboard icons
 export { default as SortIcon } from './SortIcon';
 export { default as SortAscIcon } from './SortAscIcon';
 export { default as SortDescIcon } from './SortDescIcon';
@@ -26,6 +24,5 @@ export { default as NavigationIcon } from './NavigationIcon';
 export { default as EmptyStateIcon } from './EmptyStateIcon';
 export { default as NoResultsIcon } from './NoResultsIcon';
 
-// Pagination icons
 export { default as PreviousIcon } from './PreviousIcon';
 export { default as NextIcon } from './NextIcon'; 
