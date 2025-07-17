@@ -16,7 +16,8 @@
     "previous": "Previous",
     "next": "Next",
     "back": "Back",
-    "actions": "Actions"
+    "actions": "Actions",
+    "view": "View"
   },
   "header": {
     "title": "Website Analyzer",
@@ -42,7 +43,15 @@
       "processing": "Processing",
       "completed": "Completed",
       "error": "Error",
-      "itemsPerPage": "per page"
+      "itemsPerPage": "per page",
+      "filterBy": "Filter by {{field}}",
+      "all": "All",
+      "noFilter": "No filter",
+      "clearAll": "Clear All",
+      "clearFilter": "Clear filter",
+      "globalSearch": "Global Search",
+      "status": "Status",
+      "queued": "Queued"
     },
     "table": {
       "urls": "URLs",
@@ -116,7 +125,12 @@
       "headingsDistribution": "Headings Distribution",
       "internalLinks": "Internal Links",
       "externalLinks": "External Links",
-      "brokenLinks": "Broken Links"
+      "brokenLinks": "Broken Links",
+      "count": "Count",
+      "linkCount": "Link Count",
+      "chartType": "Chart Type",
+      "barChart": "Bar Chart",
+      "donutChart": "Donut Chart"
     },
     "brokenLinks": {
       "title": "Broken Links ({{count}})",
@@ -169,7 +183,14 @@
     "errorBulkAnalyze": "Error analyzing selected URLs",
     "errorBulkDelete": "Error deleting selected URLs",
     "errorExporting": "Error exporting data",
-    "errorImporting": "Error importing URLs"
+    "errorImporting": "Error importing URLs",
+    "bulkAnalyzeStarted": "Bulk analysis started!",
+    "bulkDeleteSuccess": "URLs successfully deleted!",
+    "exportSuccess": "Data successfully exported!",
+    "importSuccess": "{{count}} URLs successfully imported!",
+    "importError": "Import error - URL column not found",
+    "noUrlsFound": "No URLs found in file",
+    "invalidFileType": "Invalid file type - only CSV files are allowed"
   },
   "errorBoundary": {
     "title": "Oops! Something went wrong",
