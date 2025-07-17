@@ -22,13 +22,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className='min-h-screen bg-gray-50'>
       <nav className='bg-white shadow-sm border-b border-gray-200'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex justify-between h-16'>
-            <div className='flex items-center'>
+          <div className='flex justify-between items-center h-16'>
+            <div className='flex items-center min-w-0 flex-1'>
               <Link to='/' className='flex-shrink-0 flex items-center'>
                 <div className='h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center'>
                   <NavigationIcon className='h-5 w-5 text-white' />
                 </div>
-                <span className='ml-2 text-xl font-bold text-gray-900'>
+                <span className='ml-2 text-lg sm:text-xl font-bold text-gray-900 truncate'>
                   {t('header.title')}
                 </span>
               </Link>
@@ -47,8 +47,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
             </div>
 
-            <div className='flex items-center space-x-4'>
-              <span className='text-sm text-gray-500'>
+            <div className='flex items-center space-x-2 md:space-x-4 flex-shrink-0'>
+              <span className='hidden md:inline text-sm text-gray-500'>
                 {t('header.subtitle')}
               </span>
               <LanguageSelector />
