@@ -1,44 +1,56 @@
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import { describe, it, expect } from 'vitest';
+import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router-dom';
+import { Layout } from './components/layout/Layout';
 
-describe('App Component', () => {
-  test('renders Website Analyzer title', () => {
-    render(<App />);
-    const titleElement = screen.getByText(/Website Analyzer/i);
-    expect(titleElement).toBeInTheDocument();
+describe('App Layout', () => {
+  it('renders layout without crashing', () => {
+    render(
+      <MemoryRouter>
+        <Layout><div>Test Content</div></Layout>
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
   });
 
-  test('renders setup complete message', () => {
-    render(<App />);
-    const setupMessage = screen.getByText(/Setup Complete!/i);
-    expect(setupMessage).toBeInTheDocument();
+  it('renders header navigation', () => {
+    render(
+      <MemoryRouter>
+        <Layout><div>Test Content</div></Layout>
+      </MemoryRouter>
+    );
+    expect(screen.getByText('header.title')).toBeInTheDocument();
+    expect(screen.getByText('header.dashboard')).toBeInTheDocument();
   });
 
-  test('renders all three status cards', () => {
-    render(<App />);
-    
-    const frontendCard = screen.getByText(/Frontend ✅/i);
-    const backendCard = screen.getByText(/Backend 🔧/i);
-    const databaseCard = screen.getByText(/Database ✅/i);
-    
-    expect(frontendCard).toBeInTheDocument();
-    expect(backendCard).toBeInTheDocument();
-    expect(databaseCard).toBeInTheDocument();
+  it('renders language selector', () => {
+    render(
+      <MemoryRouter>
+        <Layout><div>Test Content</div></Layout>
+      </MemoryRouter>
+    );
+    expect(screen.getByText('EN')).toBeInTheDocument();
+    expect(screen.getByText('English')).toBeInTheDocument();
   });
 
-  test('has proper responsive grid layout', () => {
-    render(<App />);
-    const gridContainer = screen.getByText(/Frontend ✅/i).closest('.grid');
-    
-    expect(gridContainer).toHaveClass('grid-cols-1');
-    expect(gridContainer).toHaveClass('md:grid-cols-3');
+  it('has proper navigation structure', () => {
+    render(
+      <MemoryRouter>
+        <Layout><div>Test Content</div></Layout>
+      </MemoryRouter>
+    );
+    const nav = screen.getByRole('navigation');
+    expect(nav).toHaveClass('bg-white', 'shadow-sm');
   });
 
-  test('applies correct styling classes', () => {
-    const { container } = render(<App />);
-    const mainDiv = container.firstChild as HTMLElement;
-    
-    expect(mainDiv).toHaveClass('min-h-screen');
-    expect(mainDiv).toHaveClass('bg-gray-50');
+  it('renders main content area', () => {
+    render(
+      <MemoryRouter>
+        <Layout><div>Test Content</div></Layout>
+      </MemoryRouter>
+    );
+    const main = screen.getByRole('main');
+    expect(main).toHaveClass('flex-1');
   });
-}); 
+});

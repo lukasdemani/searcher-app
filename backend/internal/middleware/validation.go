@@ -189,7 +189,6 @@ func ValidationMiddleware() gin.HandlerFunc {
 				}
 			}
 
-			// Page validation
 			if page := c.Query("page"); page != "" {
 				if _, err := validator.ValidateIntegerParam(page, "page", 1, validator.config.MaxPageValue); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{

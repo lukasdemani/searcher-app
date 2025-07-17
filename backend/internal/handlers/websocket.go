@@ -25,7 +25,7 @@ type StatusUpdate struct {
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return true // Allow all origins for development
+		return true
 	},
 }
 
@@ -74,7 +74,6 @@ func (h *WebSocketHandler) HandleWebSocket(c *gin.Context) {
 
 	h.register <- conn
 
-	// Handle incoming messages and cleanup
 	go func() {
 		defer func() {
 			h.unregister <- conn

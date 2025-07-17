@@ -13,6 +13,7 @@ import (
 
 	"searcher-app/internal/database"
 	"searcher-app/internal/handlers"
+	"searcher-app/internal/middleware"
 	"searcher-app/internal/repository"
 	"searcher-app/internal/services"
 	"searcher-app/internal/worker"
@@ -96,20 +97,7 @@ func main() {
 
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-
-	r.Use(func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "http://localhost:5173")
-		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization, X-Requested-With")
-		c.Header("Access-Control-Allow-Credentials", "true")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
-	})
+	r.Use(middleware.DefaultCORSMiddleware())
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -122,6 +110,7 @@ func main() {
 	r.GET("/ws", wsHandler.HandleWebSocket)
 
 	api := r.Group("/api")
+	api.Use(middleware.APIKeyAuth())
 	{
 		api.GET("/urls", urlHandler.GetURLs)
 		api.GET("/urls/:id", urlHandler.GetURL)
