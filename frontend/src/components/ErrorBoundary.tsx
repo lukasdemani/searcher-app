@@ -1,10 +1,9 @@
 import React, {
   Component,
-  ErrorInfo,
-  ReactNode,
   useCallback,
   useState,
 } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExclamationTriangleIcon } from './icons';
 import Button from './ui/Button';
@@ -20,7 +19,6 @@ interface ErrorBoundaryState {
   errorInfo?: ErrorInfo;
 }
 
-// Class component for error boundary functionality (required by React)
 class ErrorBoundaryClass extends Component<
   ErrorBoundaryProps & {
     onError: (error: Error, errorInfo: ErrorInfo) => void;
@@ -62,7 +60,6 @@ class ErrorBoundaryClass extends Component<
   }
 }
 
-// Functional component wrapper
 const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
   children,
   fallback,
