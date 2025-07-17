@@ -29,7 +29,6 @@ const Select: React.FC<SelectProps> = ({
         value={value}
         onChange={(e) => {
           const newValue = e.target.value;
-          // Try to convert to number if the original value was a number
           const convertedValue = typeof value === 'number' ? Number(newValue) : newValue;
           onChange(convertedValue);
         }}

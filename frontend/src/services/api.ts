@@ -5,6 +5,8 @@ import i18n from '../i18n';
 const API_BASE_URL = 'http://localhost:8080/api';
 console.log(API_BASE_URL);
 
+const API_KEY = 'dev-api-key-2025';
+
 export interface BrokenLink {
   id: number;
   url_id: number;
@@ -57,6 +59,7 @@ const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'X-API-Key': API_KEY,
   },
 });
 
@@ -120,8 +123,14 @@ export const bulkDelete = async (ids: number[]): Promise<SuccessResponse> => {
   }
 };
 
-export const getBrokenLinks = async (): Promise<BrokenLink[]> => {
-  return [];
+export const getBrokenLinks = async (urlId: number): Promise<BrokenLink[]> => {
+  try {
+    const response = await api.get(`/urls/${urlId}/broken-links`);
+    return response.data || [];
+  } catch (error) {
+    console.error('Failed to fetch broken links:', error);
+    return [];
+  }
 };
 
 export const healthCheck = async (): Promise<{ status: string }> => {
