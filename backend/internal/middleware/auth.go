@@ -13,7 +13,7 @@ func APIKeyAuth() gin.HandlerFunc {
 
 		expectedAPIKey := os.Getenv("API_KEY")
 		if expectedAPIKey == "" {
-			expectedAPIKey = "dev-api-key-2024"
+			expectedAPIKey = "dev-api-key-2025"
 		}
 
 		if apiKey == "" {
@@ -43,7 +43,7 @@ func OptionalAPIKeyAuth() gin.HandlerFunc {
 		apiKey := c.GetHeader("X-API-Key")
 		expectedAPIKey := os.Getenv("API_KEY")
 		if expectedAPIKey == "" {
-			expectedAPIKey = "dev-api-key-2024"
+			expectedAPIKey = "dev-api-key-2025"
 		}
 
 		if apiKey == "" {
